@@ -1,0 +1,74 @@
+import { db, eq, and } from "@repo/database";
+import { formsTable, FormSchemaField } from "@repo/database/schema";
+import { z } from "zod";
+
+export const formFieldSchema = z.object({
+  id: z.string().startsWith("fld_"),
+  type: z.string(),
+  label: z.string(),
+  required: z.boolean().default(false),
+  options: z.array(z.string()).optional(),
+  conditional_logic: z.record(z.string(), z.any()).optional(),
+  page_number: z.number().optional(),
+});
+
+export const formSchemaArray = z.array(formFieldSchema);
+
+class FormService {
+  public async createForm(creatorId: string, title: string, theme: "neon_cyberpunk" | "windows_95" | "silicon_valley") {
+    const slug = Math.random().toString(36).substring(2, 10);
+    
+    const [form] = await db.insert(formsTable).values({
+      creatorId,
+      title,
+      theme,
+      slug,
+      schema: [],
+    }).returning();
+    
+    return form;
+  }
+
+  public async updateSchema(formId: string, creatorId: string, newSchema: unknown) {
+    const parsedSchema = formSchemaArray.parse(newSchema);
+    
+    const [updatedForm] = await db.update(formsTable)
+      .set({ schema: parsedSchema })
+      .where(and(eq(formsTable.id, formId), eq(formsTable.creatorId, creatorId)))
+      .returning();
+      
+    if (!updatedForm) {
+      throw new Error("Form not found or unauthorized");
+    }
+    
+    return updatedForm;
+  }
+
+  public async updateSettings(formId: string, creatorId: string, updates: { visibility?: "public" | "unlisted" | "unpublished", theme?: "neon_cyberpunk" | "windows_95" | "silicon_valley" }) {
+    const [updatedForm] = await db.update(formsTable)
+      .set(updates)
+      .where(and(eq(formsTable.id, formId), eq(formsTable.creatorId, creatorId)))
+      .returning();
+      
+    if (!updatedForm) {
+      throw new Error("Form not found or unauthorized");
+    }
+    
+    return updatedForm;
+  }
+
+  public async getMyForms(creatorId: string) {
+    return await db.query.formsTable.findMany({
+      where: eq(formsTable.creatorId, creatorId),
+    });
+  }
+
+  public async getFormById(formId: string) {
+    return await db.query.formsTable.findFirst({
+      where: eq(formsTable.id, formId),
+    });
+  }
+}
+
+export const formService = new FormService();
+export default FormService;

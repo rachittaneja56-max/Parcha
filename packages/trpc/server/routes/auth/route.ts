@@ -6,13 +6,13 @@ import { generatePath } from "../../utils/path-generator";
 import { TRPCError } from "@trpc/server";
 import { AuthError } from "@repo/services/auth/errors";
 import {
-  registerSchema,
-  loginSchema,
-  verifyEmailSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
-  googleCallbackSchema
-} from "./schema";
+  RegisterSchema,
+  LoginSchema,
+  VerifyEmailSchema,
+  ForgotPasswordSchema,
+  ResetPasswordSchema,
+  GoogleCallbackSchema
+} from "@repo/validators";
 
 const TAGS = ["Authentication"];
 const getPath = generatePath("/authentication");
@@ -40,7 +40,7 @@ export const authRouter = router({
 
   googleCallback: publicProcedure
     .meta({ openapi: { method: "GET", path: "/authentication/google-callback", tags: TAGS } })
-    .input(googleCallbackSchema)
+    .input(GoogleCallbackSchema)
     .output(z.any())
     .query(async ({ input, ctx }) => {
       try {
@@ -62,7 +62,7 @@ export const authRouter = router({
 
   register: publicProcedure
     .meta({ openapi: { method: "POST", path: getPath("/register"), tags: TAGS } })
-    .input(registerSchema)
+    .input(RegisterSchema)
     .output(z.any())
     .mutation(async ({ input }) => {
       try {
@@ -75,7 +75,7 @@ export const authRouter = router({
 
   login: publicProcedure
     .meta({ openapi: { method: "POST", path: getPath("/login"), tags: TAGS } })
-    .input(loginSchema)
+    .input(LoginSchema)
     .output(z.any())
     .mutation(async ({ input, ctx }) => {
       try {
@@ -91,7 +91,7 @@ export const authRouter = router({
 
   verifyEmail: publicProcedure
     .meta({ openapi: { method: "POST", path: getPath("/verify-email"), tags: TAGS } })
-    .input(verifyEmailSchema)
+    .input(VerifyEmailSchema)
     .output(z.any())
     .mutation(async ({ input }) => {
       try {
@@ -104,7 +104,7 @@ export const authRouter = router({
 
   forgotPassword: publicProcedure
     .meta({ openapi: { method: "POST", path: getPath("/forgot-password"), tags: TAGS } })
-    .input(forgotPasswordSchema)
+    .input(ForgotPasswordSchema)
     .output(z.any())
     .mutation(async ({ input }) => {
       try {
@@ -117,7 +117,7 @@ export const authRouter = router({
 
   resetPassword: publicProcedure
     .meta({ openapi: { method: "POST", path: getPath("/reset-password"), tags: TAGS } })
-    .input(resetPasswordSchema)
+    .input(ResetPasswordSchema)
     .output(z.any())
     .mutation(async ({ input }) => {
       try {
