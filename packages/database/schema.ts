@@ -3,4 +3,5 @@ export * from "./models/forms";
 export * from "./models/responses";
 export * from "./models/analytics";
 export * from "./models/tokens";
+export * from "./models/settings";
 

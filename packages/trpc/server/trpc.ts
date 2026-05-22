@@ -23,3 +23,15 @@ export const protectedProcedure = tRPCContext.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+export const adminProcedure = tRPCContext.procedure.use(({ ctx, next }) => {
+  if (!ctx.user || ctx.user.role !== "admin") {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authorized as admin" });
+  }
+  return next({
+    ctx: {
+      ...ctx,
+      user: ctx.user,
+    },
+  });
+});
