@@ -24,7 +24,7 @@ class AuthService {
       },
     });
     await transporter.sendMail({
-      from: env.SMTP_USER,
+      from: env.SMTP_FROM || env.SMTP_USER,
       to,
       subject,
       text,

@@ -30,6 +30,8 @@ out/
 build
 dist
 
+.agents/
+skills-lock.json
 
 # Debug
 npm-debug.log*

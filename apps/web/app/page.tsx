@@ -1,13 +1,19 @@
-import { api } from "~/trpc/server";
+import { Navbar } from "~/components/landing/Navbar";
+import { Hero } from "~/components/landing/Hero";
+import { LivePreviewSection } from "~/components/landing/LivePreviewSection";
+import { Pricing } from "~/components/landing/Pricing";
+import { Footer } from "~/components/landing/Footer";
 
-export default async function Home() {
-  const { status } = await api.health.getHealth.query();
+export default function Home() {
   return (
-    <main className="min-h-screen min-w-screen flex justify-center items-center">
-      <div>
-        <h1 className="text-3xl">Streamyst - Stream in Style</h1>
-        <h2>Server Status: {status}</h2>
+    <main className="min-h-screen bg-zinc-950 text-zinc-50 selection:bg-zinc-800 selection:text-white font-sans antialiased">
+      <Navbar />
+      <div className="flex flex-col gap-8 md:gap-16 pb-16">
+        <Hero />
+        <LivePreviewSection />
+        <Pricing />
       </div>
+      <Footer />
     </main>
   );
 }
