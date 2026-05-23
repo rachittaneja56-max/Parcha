@@ -1,16 +1,20 @@
-import { db, eq, and, desc } from "@repo/database";
+import { eq, and, desc } from "@repo/database";
+import type { db } from "@repo/database";
+import { TRPCError } from "@trpc/server";
 import { formsTable, analyticsTable, responsesTable } from "@repo/database/schema";
 
 class AnalyticsService {
+  constructor(private readonly dbInstance: typeof db) {}
+
   public async getDashboardStats(formId: string, creatorId: string) {
-    const form = await db.query.formsTable.findFirst({
+    const form = await this.dbInstance.query.formsTable.findFirst({
       where: and(eq(formsTable.id, formId), eq(formsTable.creatorId, creatorId)),
     });
 
     if (!form) {
-      throw new Error("UNAUTHORIZED");
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Form not found or unauthorized" });
     }
-    const stats = await db.query.analyticsTable.findFirst({
+    const stats = await this.dbInstance.query.analyticsTable.findFirst({
       where: eq(analyticsTable.formId, formId),
     });
 
@@ -21,7 +25,7 @@ class AnalyticsService {
       conversionRate = (submissions / views) * 100;
     }
 
-    const recentResponses = await db.query.responsesTable.findMany({
+    const recentResponses = await this.dbInstance.query.responsesTable.findMany({
       where: eq(responsesTable.formId, formId),
       orderBy: [desc(responsesTable.submittedAt)],
       limit: 20,
@@ -38,15 +42,15 @@ class AnalyticsService {
   }
 
   public async getAllResponses(formId: string, creatorId: string, limit: number, offset: number) {
-    const form = await db.query.formsTable.findFirst({
+    const form = await this.dbInstance.query.formsTable.findFirst({
       where: and(eq(formsTable.id, formId), eq(formsTable.creatorId, creatorId)),
     });
 
     if (!form) {
-      throw new Error("UNAUTHORIZED");
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Form not found or unauthorized" });
     }
 
-    const responses = await db.query.responsesTable.findMany({
+    const responses = await this.dbInstance.query.responsesTable.findMany({
       where: eq(responsesTable.formId, formId),
       orderBy: [desc(responsesTable.submittedAt)],
       limit,
@@ -57,5 +61,5 @@ class AnalyticsService {
   }
 }
 
-export const analyticsService = new AnalyticsService();
+
 export default AnalyticsService;

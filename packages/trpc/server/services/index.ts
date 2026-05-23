@@ -4,10 +4,11 @@ import FormService from "@repo/services/form";
 import ResponseService from "@repo/services/response";
 import AnalyticsService from "@repo/services/analytics";
 import AdminService from "@repo/services/admin";
+import { db } from "@repo/database";
 
-export const userService = new UserService();
-export const authService = new AuthService();
-export const formService = new FormService();
-export const responseService = new ResponseService();
-export const analyticsService = new AnalyticsService();
-export const adminService = new AdminService();
+export const userService = new UserService(db);
+export const authService = new AuthService(db);
+export const formService = new FormService(db);
+export const responseService = new ResponseService(db);
+export const analyticsService = new AnalyticsService(db);
+export const adminService = new AdminService(db);

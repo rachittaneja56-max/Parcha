@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { authService } from "./services";
 
 export async function createContext({ req, res }: { req: any; res: any } | any) {
@@ -10,6 +11,7 @@ export async function createContext({ req, res }: { req: any; res: any } | any) 
       try {
         user = await authService.verifySession(token);
       } catch (e) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid session" });
       }
     }
   }

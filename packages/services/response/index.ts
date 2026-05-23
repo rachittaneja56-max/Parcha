@@ -1,20 +1,24 @@
-import { db, eq, sql } from "@repo/database";
+import { eq, sql } from "@repo/database";
+import type { db } from "@repo/database";
+import { TRPCError } from "@trpc/server";
 import { formsTable, analyticsTable, responsesTable } from "@repo/database/schema";
 import { appEventBus } from "../events";
 import { z } from "zod";
 
 
 class ResponseService {
+  constructor(private readonly dbInstance: typeof db) {}
+
   public async trackView(slug: string) {
-    const form = await db.query.formsTable.findFirst({
+    const form = await this.dbInstance.query.formsTable.findFirst({
       where: eq(formsTable.slug, slug),
     });
 
     if (!form) {
-      throw new Error("Form not found");
+      throw new TRPCError({ code: "NOT_FOUND", message: "Form not found" });
     }
 
-    await db.insert(analyticsTable)
+    await this.dbInstance.insert(analyticsTable)
       .values({
         formId: form.id,
         views: 1,
@@ -33,12 +37,12 @@ class ResponseService {
     honeypotField?: string,
     fingerprint?: string
   ) {
-    const form = await db.query.formsTable.findFirst({
+    const form = await this.dbInstance.query.formsTable.findFirst({
       where: eq(formsTable.slug, slug),
     });
 
     if (!form || form.visibility === "unpublished") {
-      throw new Error("Form not found or unpublished");
+      throw new TRPCError({ code: "NOT_FOUND", message: "Form not found or unpublished" });
     }
 
     if (honeypotField && honeypotField.length > 0) {
@@ -67,7 +71,7 @@ class ResponseService {
     
     const parsedPayload = dynamicSchema.parse(payload);
 
-    await db.transaction(async (tx) => {
+    await this.dbInstance.transaction(async (tx) => {
       const [newResponse] = await tx
         .insert(responsesTable)
         .values({
@@ -104,5 +108,4 @@ class ResponseService {
   }
 }
 
-export const responseService = new ResponseService();
 export default ResponseService;
