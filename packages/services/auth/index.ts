@@ -66,10 +66,15 @@ class AuthService {
       const [newUser] = await this.dbInstance.insert(usersTable).values({
         fullName: payload.name || "Google User",
         email: payload.email,
-        emailVerified: payload.email_verified || false,
+        emailVerified: true,
         profileImageUrl: payload.picture || null,
       }).returning();
       user = newUser;
+    } else if (!user.emailVerified) {
+      const [updatedUser] = await this.dbInstance.update(usersTable).set({
+        emailVerified: true,
+      }).where(eq(usersTable.id, user.id)).returning();
+      user = updatedUser;
     }
     if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to resolve or create user" });
     const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, { expiresIn: "7d" });
@@ -118,7 +123,12 @@ class AuthService {
       type: "verification",
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     });
-    await this.sendEmail(email, "Verify your email", `Use this token to verify: ${token}`);
+    const verificationUrl = `${env.BASE_URL}/api/authentication/verify?token=${token}`;
+    await this.sendEmail(
+      email,
+      "Verify your email",
+      `Click the following link to verify your email:\n\n${verificationUrl}`
+    );
     if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create user" });
     return user;
   }

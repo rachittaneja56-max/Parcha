@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { zodUndefinedModel } from "@repo/validators";
 import { authService } from "../../services";
+import { env } from "@repo/services/env";
 import { getAuthenticationMethodOutputSchema } from "@repo/services/user/model";
 import { publicProcedure, protectedProcedure, router } from "../../trpc";
 import { generatePath } from "../../utils/path-generator";
@@ -48,13 +49,13 @@ export const authRouter = router({
         const result = await authService.handleGoogleCallback(input.code);
         if (ctx?.res) {
           ctx.res.setHeader("Set-Cookie", getCookieString(result.token));
-          ctx.res.redirect("http://localhost:3000/dashboard");
+          ctx.res.redirect(`${env.FRONTEND_URL}/dashboard`);
           return { success: true, redirecting: true };
         }
         return { success: true, user: result.user, token: result.token };
       } catch (error: any) {
         if (ctx?.res) {
-          ctx.res.redirect("http://localhost:3000/?login=error&message=" + encodeURIComponent(error?.message || "Unknown error"));
+          ctx.res.redirect(`${env.FRONTEND_URL}/?login=error&message=` + encodeURIComponent(error?.message || "Unknown error"));
           return { success: false, redirecting: true };
         }
         mapAuthError(error);
@@ -103,6 +104,34 @@ export const authRouter = router({
         await authService.verifyEmail(input.token);
         return { success: true };
       } catch (error: any) {
+        mapAuthError(error);
+      }
+    }),
+
+  verify: publicProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/authentication/verify",
+        protect: false,
+        tags: TAGS,
+      },
+    })
+    .input(z.object({ token: z.string() }))
+    .output(z.any())
+    .query(async ({ input, ctx }) => {
+      try {
+        await authService.verifyEmail(input.token);
+        if (ctx?.res) {
+          ctx.res.redirect(env.FRONTEND_URL);
+          return { success: true, redirecting: true };
+        }
+        return { success: true };
+      } catch (error: any) {
+        if (ctx?.res) {
+          ctx.res.redirect(`${env.FRONTEND_URL}/auth/login?error=` + encodeURIComponent(error?.message || "Invalid or expired token"));
+          return { success: false, redirecting: true };
+        }
         mapAuthError(error);
       }
     }),

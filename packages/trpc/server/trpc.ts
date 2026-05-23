@@ -16,6 +16,9 @@ export const protectedProcedure = tRPCContext.procedure.use(({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
   }
+  if (!ctx.user.emailVerified) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "Email verification required." });
+  }
   return next({
     ctx: {
       ...ctx,

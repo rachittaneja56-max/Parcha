@@ -11,6 +11,8 @@ const envSchema = z.object({
   SMTP_PASS: z.string().optional(),
   SMTP_FROM: z.string().optional(),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  FRONTEND_URL: z.string().url().default("http://localhost:3000"),
+  BASE_URL: z.string().url().default("http://localhost:8000"),
 });
 
 function createEnv(env: NodeJS.ProcessEnv) {
