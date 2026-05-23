@@ -8,6 +8,7 @@ export const formFieldSchema = z.object({
   id: z.string().startsWith("fld_"),
   type: z.string(),
   label: z.string(),
+  prompt: z.string(),
   required: z.boolean().default(false),
   options: z.array(z.string()).optional(),
   conditional_logic: z.record(z.string(), z.any()).optional(),

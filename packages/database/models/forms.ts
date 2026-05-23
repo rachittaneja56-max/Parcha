@@ -11,6 +11,7 @@ export type FormSchemaField = {
   id: string;
   type: string;
   label: string;
+  prompt: string;
   required: boolean;
   options?: string[];
   conditional_logic?: Record<string, any>;
