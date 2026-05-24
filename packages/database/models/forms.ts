@@ -36,7 +36,7 @@ export const formsTable = pgTable("forms", {
   maxResponses: integer("max_responses"),
   isArchived: boolean("is_archived").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()).notNull(),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()).notNull().defaultNow(),
 });
 
 export const formsRelations = relations(formsTable, ({ one, many }) => ({

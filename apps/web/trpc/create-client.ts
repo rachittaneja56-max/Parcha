@@ -9,14 +9,23 @@ export const createTRPCHttpBatchClientClient = (opts?: CreateTRPCHttpBatchClient
   const c = opts?.enableStreaming ? httpBatchStreamLink : httpLink;
   return c({
     url: env.NEXT_PUBLIC_API_URL ?? "/trpc",
-    fetch(url, options) {
+    async fetch(url, options) {
+      const headers = new Headers(options?.headers);
+      headers.set("x-csrf-token", "1");
+
+      if (typeof window === "undefined") {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        const cookieArray = cookieStore.getAll().map((c: any) => `${c.name}=${c.value}`);
+        if (cookieArray.length > 0) {
+          headers.set("cookie", cookieArray.join("; "));
+        }
+      }
+
       return fetch(url, {
         ...options,
         credentials: "include",
-        headers: {
-          ...options?.headers,
-          "x-csrf-token": "1",
-        },
+        headers,
       });
     },
   });

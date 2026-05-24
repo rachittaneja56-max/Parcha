@@ -8,11 +8,20 @@ export const tRPCContext = initTRPC
   .context<typeof createContext>()
   .create({});
 
+const csrfMiddleware = tRPCContext.middleware(({ ctx, type, next }) => {
+  if (type === "mutation") {
+    if (!ctx.req?.headers?.["x-csrf-token"]) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "CSRF token missing or invalid" });
+    }
+  }
+  return next();
+});
+
 export const router = tRPCContext.router;
 
-export const publicProcedure = tRPCContext.procedure;
+export const publicProcedure = tRPCContext.procedure.use(csrfMiddleware);
 
-export const protectedProcedure = tRPCContext.procedure.use(({ ctx, next }) => {
+export const protectedProcedure = publicProcedure.use(({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
   }
@@ -27,7 +36,7 @@ export const protectedProcedure = tRPCContext.procedure.use(({ ctx, next }) => {
   });
 });
 
-export const adminProcedure = tRPCContext.procedure.use(({ ctx, next }) => {
+export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (!ctx.user || ctx.user.role !== "admin") {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authorized as admin" });
   }

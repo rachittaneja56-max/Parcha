@@ -34,31 +34,31 @@ export function SortableFieldCard({
       onClick={onSelect}
       className={`flex items-center gap-3 px-4 py-3.5 rounded-sm border transition-all group cursor-pointer ${
         isSelected
-          ? "border-primary/60 bg-primary/5 shadow-sm"
-          : "border-border bg-card hover:border-primary/30"
+          ? "border-indigo-500 bg-indigo-950/40 shadow-sm"
+          : "border-slate-800 bg-slate-900 hover:border-indigo-500/50"
       }`}
     >
       <button
         {...attributes}
         {...listeners}
         onClick={(e) => e.stopPropagation()}
-        className="text-muted-foreground/40 hover:text-muted-foreground cursor-grab active:cursor-grabbing shrink-0"
+        className="text-slate-500 hover:text-slate-300 cursor-grab active:cursor-grabbing shrink-0"
       >
         <GripVertical className="h-4 w-4" />
       </button>
 
-      <div className="flex items-center justify-center w-8 h-8 rounded-sm bg-muted text-muted-foreground shrink-0">
+      <div className="flex items-center justify-center w-8 h-8 rounded-sm bg-slate-950 border border-slate-800/60 text-slate-400 shrink-0">
         <Icon className="h-4 w-4" />
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-card-foreground truncate">
+        <p className="text-sm font-medium text-slate-200 truncate">
           {field.name}
         </p>
-        <p className="text-xs text-muted-foreground font-mono mt-0.5 truncate">
+        <p className="text-xs text-slate-400 font-mono mt-0.5 truncate">
           {field.prompt}
           {field.required && (
-            <span className="ml-2 text-primary/70">required</span>
+            <span className="ml-2 text-indigo-400 font-semibold uppercase text-[9px] tracking-wider">required</span>
           )}
         </p>
       </div>

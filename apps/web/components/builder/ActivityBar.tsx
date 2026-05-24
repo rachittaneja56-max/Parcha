@@ -11,7 +11,7 @@ export function ActivityBar({
   onItemClick: (id: string) => void;
 }) {
   return (
-    <aside className="w-14 shrink-0 flex flex-col items-center justify-between py-4 border-r border-[#1c1c1c] bg-[#0a0a0a]">
+    <aside className="w-14 shrink-0 flex flex-col items-center justify-between py-4 border-r border-slate-800 bg-slate-900">
       <div className="flex flex-col items-center gap-4">
         {ACTIVITY_ITEMS.map((item) => (
           <Tooltip key={item.id}>
@@ -20,22 +20,22 @@ export function ActivityBar({
                 onClick={() => onItemClick(item.id)}
                 className={`flex items-center justify-center w-10 h-10 rounded-sm transition-colors ${
                   activeItem === item.id
-                    ? "bg-[#1c1c1c] text-white"
-                    : "text-zinc-500 hover:text-zinc-300 hover:bg-[#111]"
+                    ? "bg-indigo-600 text-white animate-pulse"
+                    : "text-zinc-500 hover:text-zinc-300 hover:bg-slate-800"
                 }`}
               >
                 <item.icon className="h-5 w-5" />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="right" className="text-xs font-mono border-[#1c1c1c] bg-[#111] text-zinc-300">
+            <TooltipContent side="right" className="text-xs font-mono border-slate-800 bg-slate-950 text-zinc-300">
               {item.label}
             </TooltipContent>
           </Tooltip>
         ))}
       </div>
 
-      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-black border border-[#222] text-white font-bold text-sm select-none">
-        N
+      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-950 border border-slate-800 text-white font-bold text-sm select-none">
+        P
       </div>
     </aside>
   );

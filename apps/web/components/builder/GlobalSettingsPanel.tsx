@@ -23,8 +23,8 @@ export function GlobalSettingsPanel({
   onChange: (updates: Partial<FormSettings>) => void;
 }) {
   return (
-    <aside className="w-72 shrink-0 flex flex-col border-r border-[#1c1c1c] bg-[#0a0a0a]">
-      <div className="flex items-center justify-between px-4 py-4 border-b border-[#1c1c1c]">
+    <aside className="w-72 shrink-0 flex flex-col border-r border-slate-800 bg-slate-900">
+      <div className="flex items-center justify-between px-4 py-4 border-b border-slate-800">
         <div className="flex items-center gap-2">
           <Settings className="h-4 w-4 text-zinc-400" />
           <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 select-none">
@@ -41,7 +41,7 @@ export function GlobalSettingsPanel({
             <Input
               value={settings.title}
               onChange={(e) => onChange({ title: e.target.value })}
-              className="h-8 text-sm font-mono bg-[#111] border-[#1c1c1c]"
+              className="h-8 text-sm font-mono bg-slate-950 border-slate-800 focus-visible:ring-indigo-500 text-slate-100"
             />
           </div>
 
@@ -97,7 +97,7 @@ export function GlobalSettingsPanel({
               placeholder="Leave blank for none"
               value={settings.password || ""}
               onChange={(e) => onChange({ password: e.target.value || null })}
-              className="h-8 text-sm font-mono bg-[#111] border-[#1c1c1c]"
+              className="h-8 text-sm font-mono bg-slate-950 border-slate-800 focus-visible:ring-indigo-500 text-slate-100"
             />
           </div>
 
@@ -108,7 +108,7 @@ export function GlobalSettingsPanel({
             <Textarea
               value={settings.successMessage}
               onChange={(e) => onChange({ successMessage: e.target.value })}
-              className="text-sm font-mono bg-[#111] border-[#1c1c1c] resize-none"
+              className="text-sm font-mono bg-slate-950 border-slate-800 resize-none focus-visible:ring-indigo-500 text-slate-100"
               rows={3}
             />
           </div>

@@ -21,7 +21,7 @@ const getPath = generatePath("/authentication");
 
 const getCookieString = (token: string) => {
   const isProd = process.env.NODE_ENV === "production";
-  return `parcha_session=${token}; ${isProd ? "HttpOnly; Secure; " : ""}Path=/; Max-Age=604800; SameSite=Lax`;
+  return `parcha_session=${token}; HttpOnly; ${isProd ? "Secure; " : ""}Path=/; Max-Age=604800; SameSite=Lax`;
 };
 
 const mapAuthError = (error: any) => {

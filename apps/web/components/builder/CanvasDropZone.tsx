@@ -24,28 +24,28 @@ export function CanvasDropZone({
     <div
       ref={setNodeRef}
       className={`h-full overflow-y-auto transition-colors ${
-        isOver ? "bg-[#111]" : "bg-[#0a0a0a]"
+        isOver ? "bg-slate-900/50" : "bg-slate-950"
       }`}
     >
       {isEmpty ? (
-        <div className="flex flex-col items-center justify-center h-full py-24 text-center pointer-events-none select-none">
+        <div className="flex flex-col items-center justify-center h-full py-24 text-center pointer-events-none select-none bg-slate-950">
           <div
-            className={`w-16 h-16 rounded-sm flex items-center justify-center mb-5 border-2 border-dashed transition-colors ${
+            className={`w-16 h-16 rounded-md flex items-center justify-center mb-5 border-2 border-dashed transition-all ${
               isOver
-                ? "border-primary/50 bg-primary/10"
-                : "border-border/50 bg-muted/30"
+                ? "border-indigo-500 bg-indigo-500/10 text-indigo-400"
+                : "border-slate-800 bg-slate-900/50 text-slate-600"
             }`}
           >
             <Blocks
               className={`w-7 h-7 transition-colors ${
-                isOver ? "text-primary/70" : "text-muted-foreground/40"
+                isOver ? "text-indigo-400 animate-pulse" : "text-slate-600"
               }`}
             />
           </div>
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="text-sm font-medium text-slate-400 font-mono">
             {isOver ? "Release to add field" : "Drag components here to build your form"}
           </p>
-          <p className="text-xs text-muted-foreground/50 mt-2 font-mono">
+          <p className="text-xs text-slate-600 mt-2 font-mono">
             Drop fields from the sidebar or press Ctrl+K
           </p>
         </div>

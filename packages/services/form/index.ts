@@ -29,6 +29,7 @@ class FormService {
       theme,
       slug,
       schema: [],
+      updatedAt: new Date(),
     }).returning();
     
     return form;
