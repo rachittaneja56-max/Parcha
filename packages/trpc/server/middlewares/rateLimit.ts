@@ -16,7 +16,7 @@ export const rateLimitMiddleware = tRPCContext.middleware(async ({ ctx, next, in
   const record = rateLimitMap.get(identifier);
 
   if (record && record.resetAt > now) {
-    if (record.count >= 3) {
+    if (record.count >= 50) {
       throw new TRPCError({
         code: "TOO_MANY_REQUESTS",
         message: "Rate limit exceeded. Try again in 10 minutes.",

@@ -119,17 +119,17 @@ function TerminalContent({
         className="flex flex-col gap-0.5 p-4 font-mono text-xs leading-relaxed select-none bg-[#050B14] h-full"
         onClick={() => inputRef.current?.focus()}
       >
-        <div className="mb-4 text-slate-500/60 border-b border-[#0f1b2d] pb-2">
+        <div className="mb-4 text-zinc-500/60 border-b border-[#0f1b2d] pb-2">
           <p className="text-emerald-400 font-mono font-bold tracking-wide">PARCHA TERMINAL SIMULATOR v1.0.0</p>
-          <p className="text-slate-500 text-[10px] font-mono">Simulate and test your form interaction in real-time.</p>
+          <p className="text-zinc-500 text-[10px] font-mono">Simulate and test your form interaction in real-time.</p>
         </div>
-        <p className="text-slate-400">
+        <p className="text-zinc-400">
           <span className="text-emerald-400 font-bold">parcha</span>
-          <span className="text-slate-500">@simulator</span>
-          <span className="text-slate-600"> ~ $ </span>
-          <span className="text-slate-200">parcha preview &quot;{formName || "Untitled Form"}&quot;</span>
+          <span className="text-zinc-500">@simulator</span>
+          <span className="text-zinc-600"> ~ $ </span>
+          <span className="text-zinc-200">parcha preview &quot;{formName || "Untitled Form"}&quot;</span>
         </p>
-        <p className="text-slate-500/70 mt-2">  Waiting for fields to be added in the builder...</p>
+        <p className="text-zinc-500/70 mt-2">  Waiting for fields to be added in the builder...</p>
       </div>
     );
   }
@@ -137,18 +137,18 @@ function TerminalContent({
   const lines: React.ReactNode[] = [];
   
   lines.push(
-    <div key="system-intro" className="mb-4 text-slate-500/60 border-b border-[#0f1b2d] pb-2 select-none">
+    <div key="system-intro" className="mb-4 text-zinc-500/60 border-b border-[#0f1b2d] pb-2 select-none">
       <p className="text-emerald-400 font-mono font-bold tracking-wide">PARCHA TERMINAL SIMULATOR v1.0.0</p>
-      <p className="text-slate-500 text-[10px] font-mono">Simulate and test your form interaction in real-time.</p>
+      <p className="text-zinc-500 text-[10px] font-mono">Simulate and test your form interaction in real-time.</p>
     </div>
   );
 
   lines.push(
-    <p key="cmd" className="text-slate-400 font-mono text-xs select-none">
+    <p key="cmd" className="text-zinc-400 font-mono text-xs select-none">
       <span className="text-emerald-400 font-bold">parcha</span>
-      <span className="text-slate-500">@simulator</span>
-      <span className="text-slate-600"> ~ $ </span>
-      <span className="text-slate-200">parcha preview &quot;{formName || "Untitled Form"}&quot;</span>
+      <span className="text-zinc-500">@simulator</span>
+      <span className="text-zinc-600"> ~ $ </span>
+      <span className="text-zinc-200">parcha preview &quot;{formName || "Untitled Form"}&quot;</span>
     </p>
   );
   
@@ -165,16 +165,16 @@ function TerminalContent({
 
     if (isPast) {
       lines.push(
-        <div key={`past-${field.id}`} className="text-slate-400 mt-1 pl-2 border-l border-slate-800/40 font-mono text-xs select-none">
+        <div key={`past-${field.id}`} className="text-zinc-400 mt-1 pl-2 border-l border-zinc-800/40 font-mono text-xs select-none">
           <p>{`> ${field.prompt} [ ${answers[field.id] !== undefined ? answers[field.id] : ""} ]`}</p>
         </div>
       );
     } else if (isActive) {
       lines.push(
-        <div key={`active-${field.id}`} className="text-slate-200 mt-2 font-bold pl-2 border-l-2 border-emerald-500 font-mono text-xs select-none">
-          <p className="text-slate-100">{`> ${field.prompt}${field.required ? " *" : ""}`}</p>
+        <div key={`active-${field.id}`} className="text-zinc-200 mt-2 font-bold pl-2 border-l-2 border-emerald-500 font-mono text-xs select-none">
+          <p className="text-zinc-100">{`> ${field.prompt}${field.required ? " *" : ""}`}</p>
           {(field.type === "single_select" || field.type === "multiple_choice") && field.options && (
-            <div className="my-1.5 pl-4 flex flex-col gap-0.5 text-slate-400 font-medium font-mono text-xs">
+            <div className="my-1.5 pl-4 flex flex-col gap-0.5 text-zinc-400 font-medium font-mono text-xs">
               {field.options.map((opt, optIdx) => (
                 <p key={`opt-${field.id}-${optIdx}`}>
                   {`  [${optIdx + 1}] ${opt}`}
@@ -186,7 +186,7 @@ function TerminalContent({
       );
     } else if (isFuture) {
       lines.push(
-        <div key={`future-${field.id}`} className="text-slate-700/40 mt-1 pl-2 border-l border-transparent font-mono text-xs select-none">
+        <div key={`future-${field.id}`} className="text-zinc-700/40 mt-1 pl-2 border-l border-transparent font-mono text-xs select-none">
           <p>{`> ${field.prompt}`}</p>
         </div>
       );
@@ -216,7 +216,7 @@ function TerminalContent({
     lines.push(
       <div key="active-input-line" className="mt-2 pl-2 flex items-center text-emerald-400 font-bold font-mono text-xs">
         <span>{`> ${label}: [ `}</span>
-        <span className="text-slate-100 font-mono font-normal tracking-wide whitespace-pre-wrap">
+        <span className="text-zinc-100 font-mono font-normal tracking-wide whitespace-pre-wrap">
           {currentInput}
         </span>
         <span className="text-emerald-400 animate-pulse font-bold">█</span>
@@ -238,7 +238,7 @@ function TerminalContent({
     lines.push(
       <div key="finished-block" className="mt-4 p-3 bg-emerald-950/20 border border-emerald-800/30 rounded-lg text-emerald-400 pl-4 font-bold font-mono text-xs flex flex-col gap-1 select-none">
         <p>✓ Form completed successfully!</p>
-        <p className="text-slate-500 text-[10px] font-normal font-mono">Press Enter to restart the simulator session.</p>
+        <p className="text-zinc-500 text-[10px] font-normal font-mono">Press Enter to restart the simulator session.</p>
       </div>
     );
   }

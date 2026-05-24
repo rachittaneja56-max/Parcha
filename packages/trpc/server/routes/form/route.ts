@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { zodUndefinedModel } from "@repo/validators";
-import { router, protectedProcedure } from "../../trpc";
+import { router, protectedProcedure, publicProcedure } from "../../trpc";
 import { formService } from "../../services";
-import { CreateFormSchema, UpdateSchemaSchema, UpdateSettingsSchema, GetFormByIdSchema } from "@repo/validators";
+import { CreateFormSchema, UpdateSchemaSchema, UpdateSettingsSchema, GetFormByIdSchema, GetPublicFormSchema } from "@repo/validators";
 import { generatePath } from "../../utils/path-generator";
 
 const TAGS = ["Forms"];
@@ -97,6 +97,28 @@ export const formRouter = router({
     .output(z.any())
     .query(async ({ ctx, input }) => {
       const form = await formService.getFormById(input.formId);
+      if (!form) {
+        throw new Error("Form not found");
+      }
+      return form;
+    }),
+
+  getPublicForm: publicProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: getPath("/public/{formIdOrSlug}"),
+        protect: false,
+        tags: TAGS,
+        summary: "Get public form details by ID or Slug",
+        successDescription: "The public form data",
+        errorResponses: { 404: "Form not found" },
+      },
+    })
+    .input(GetPublicFormSchema)
+    .output(z.any())
+    .query(async ({ input }) => {
+      const form = await formService.getPublicFormById(input.formIdOrSlug);
       if (!form) {
         throw new Error("Form not found");
       }

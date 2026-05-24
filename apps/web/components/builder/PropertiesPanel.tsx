@@ -16,7 +16,7 @@ export function PropertiesPanel({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-900">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-3.5 w-3.5 text-zinc-400" />
           <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 select-none">
@@ -27,7 +27,7 @@ export function PropertiesPanel({
 
       <ScrollArea className="flex-1">
         <div className="p-4 flex flex-col gap-5">
-          <div className="flex items-center gap-2 rounded-sm border border-slate-800 bg-slate-950 px-3 py-2">
+          <div className="flex items-center gap-2 rounded-sm border border-zinc-800 bg-zinc-950 px-3 py-2">
             <Icon className="h-4 w-4 text-zinc-450 shrink-0" />
             <span className="font-mono text-xs text-zinc-400 capitalize">
               {field.type.replace(/_/g, " ")}
@@ -41,7 +41,7 @@ export function PropertiesPanel({
             <Input
               value={field.name}
               onChange={(e) => onChange({ name: e.target.value })}
-              className="h-8 text-sm font-mono bg-slate-950 border-slate-800 focus-visible:ring-indigo-500 text-slate-100"
+              className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100"
               placeholder="e.g. user_email"
             />
           </div>
@@ -53,7 +53,7 @@ export function PropertiesPanel({
             <Input
               value={field.prompt}
               onChange={(e) => onChange({ prompt: e.target.value })}
-              className="h-8 text-sm font-mono bg-slate-950 border-slate-800 focus-visible:ring-indigo-500 text-slate-100"
+              className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100"
               placeholder="e.g. What is your email?"
             />
             <p className="text-[10px] text-muted-foreground/60 font-mono">
@@ -71,7 +71,7 @@ export function PropertiesPanel({
             <button
               onClick={() => onChange({ required: !field.required })}
               className={`transition-colors ${
-                field.required ? "text-indigo-500" : "text-slate-600"
+                field.required ? "text-zinc-100" : "text-zinc-600"
               }`}
             >
               {field.required ? (
@@ -86,7 +86,7 @@ export function PropertiesPanel({
             <label className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
               Field ID
             </label>
-            <p className="text-xs font-mono text-slate-400 bg-slate-950 rounded-sm px-2 py-1.5 border border-slate-800 break-all select-all">
+            <p className="text-xs font-mono text-zinc-400 bg-zinc-950 rounded-sm px-2 py-1.5 border border-zinc-800 break-all select-all">
               {field.id}
             </p>
           </div>
@@ -106,7 +106,7 @@ export function PropertiesPanel({
                         newOptions[i] = e.target.value;
                         onChange({ options: newOptions });
                       }}
-                      className="h-7 text-xs font-mono bg-slate-950 border-slate-800 focus-visible:ring-indigo-500 text-slate-100"
+                      className="h-7 text-xs font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100"
                       placeholder={`Option ${i + 1}`}
                     />
                     <button

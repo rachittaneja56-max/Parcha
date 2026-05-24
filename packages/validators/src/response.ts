@@ -9,4 +9,5 @@ export const SubmitResponseSchema = z.object({
 
 export const TrackViewSchema = z.object({
   slug: z.string(),
+  fingerprint: z.string().optional(),
 });

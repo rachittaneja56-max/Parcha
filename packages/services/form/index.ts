@@ -1,21 +1,11 @@
 import { eq, and } from "@repo/database";
 import type { db } from "@repo/database";
-import { formsTable, FormSchemaField } from "@repo/database/schema";
+import { formsTable } from "@repo/database/schema";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { FieldSchema } from "@repo/validators";
 
-export const formFieldSchema = z.object({
-  id: z.string().startsWith("fld_"),
-  type: z.string(),
-  name: z.string(),
-  prompt: z.string(),
-  required: z.boolean().default(false),
-  options: z.array(z.string()).optional(),
-  conditional_logic: z.record(z.string(), z.any()).optional(),
-  page_number: z.number().optional(),
-});
-
-export const formSchemaArray = z.array(formFieldSchema);
+const fieldSchemaArray = z.array(FieldSchema);
 
 class FormService {
   constructor(private readonly dbInstance: typeof db) {}
@@ -36,7 +26,7 @@ class FormService {
   }
 
   public async updateSchema(formId: string, creatorId: string, newSchema: unknown) {
-    const parsedSchema = formSchemaArray.parse(newSchema);
+    const parsedSchema = fieldSchemaArray.parse(newSchema);
     
     const [updatedForm] = await this.dbInstance.update(formsTable)
       .set({ schema: parsedSchema })
@@ -66,6 +56,23 @@ class FormService {
   public async getMyForms(creatorId: string) {
     return await this.dbInstance.query.formsTable.findMany({
       where: eq(formsTable.creatorId, creatorId),
+    });
+  }
+
+  public async getPublicFormById(formIdOrSlug: string) {
+    const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(formIdOrSlug);
+    return await this.dbInstance.query.formsTable.findFirst({
+      where: isUuid ? eq(formsTable.id, formIdOrSlug) : eq(formsTable.slug, formIdOrSlug),
+      columns: {
+        id: true,
+        title: true,
+        slug: true,
+        status: true,
+        requireAuth: true,
+        password: true,
+        schema: true,
+        successMessage: true,
+      }
     });
   }
 

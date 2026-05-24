@@ -18,9 +18,9 @@ function PaletteDraggable({ item }: { item: PaletteItem }) {
       {...attributes}
       {...listeners}
       style={{ opacity: isDragging ? 0.4 : 1 }}
-      className="flex items-center gap-4 w-full px-4 py-3 text-sm hover:bg-slate-800/60 transition-colors cursor-grab active:cursor-grabbing group"
+      className="flex items-center gap-4 w-full px-4 py-3 text-sm hover:bg-zinc-800/60 transition-colors cursor-grab active:cursor-grabbing group"
     >
-      <div className="flex items-center justify-center w-8 h-8 rounded-md bg-slate-950 border border-slate-800 text-zinc-400 shrink-0">
+      <div className="flex items-center justify-center w-8 h-8 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-400 shrink-0">
         <Icon className="h-4 w-4" />
       </div>
       <span className="font-mono text-xs text-zinc-400 group-hover:text-zinc-300">
@@ -32,7 +32,7 @@ function PaletteDraggable({ item }: { item: PaletteItem }) {
 
 export function PaletteSidebar() {
   return (
-    <aside className="w-64 shrink-0 flex flex-col border-r border-slate-800 bg-slate-900">
+    <aside className="w-64 shrink-0 flex flex-col border-r border-zinc-800 bg-zinc-900">
       <div className="flex items-center justify-between px-4 py-4 border-b border-transparent">
         <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 select-none">
           COMPONENTS

@@ -3,21 +3,13 @@ import { relations } from "drizzle-orm";
 import { usersTable } from "./user";
 import { responsesTable } from "./responses";
 import { analyticsTable } from "./analytics";
+import type { FieldSchemaType } from "@repo/validators";
 
 export const statusEnum = pgEnum("form_status", ["draft", "published"]);
 export const visibilityEnum = pgEnum("form_visibility", ["public", "unlisted", "unpublished"]);
 export const themeEnum = pgEnum("form_theme", ["standard_dark", "git_commit", "mongo_shell"]);
 
-export type FormSchemaField = {
-  id: string;
-  type: string;
-  name: string;
-  prompt: string;
-  required: boolean;
-  options?: string[];
-  conditional_logic?: Record<string, any>;
-  page_number?: number;
-};
+export type FormSchemaField = FieldSchemaType;
 
 export const formsTable = pgTable("forms", {
   id: uuid("id").primaryKey().defaultRandom(),

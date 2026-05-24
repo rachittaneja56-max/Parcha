@@ -12,7 +12,7 @@ export function Hero() {
         </div>
         
         <h1 className="mx-auto max-w-4xl text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl pb-2">
-          <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-zinc-500">
+          <span className="text-zinc-100">
             The form builder you won&apos;t outgrow.
           </span>
         </h1>
@@ -28,7 +28,6 @@ export function Hero() {
         </div>
       </div>
       
-      <div className="absolute inset-0 -z-10 h-full w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/20 via-zinc-950 to-zinc-950"></div>
     </section>
   );
 }

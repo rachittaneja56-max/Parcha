@@ -9,17 +9,10 @@ import {
   LucideIcon,
   Blocks,
   Settings,
-  Share2,
 } from "lucide-react";
+import type { FieldSchemaType } from "@repo/validators";
 
-export type SchemaField = {
-  id: string;
-  type: string;
-  name: string;
-  prompt: string;
-  required: boolean;
-  options?: string[];
-};
+export type SchemaField = FieldSchemaType;
 
 export type PaletteItem = {
   icon: LucideIcon;
@@ -43,7 +36,6 @@ export const FIELD_PALETTE: PaletteItem[] = [
 export const ACTIVITY_ITEMS = [
   { icon: Blocks, label: "Components", id: "components" },
   { icon: Settings, label: "Settings", id: "settings" },
-  { icon: Share2, label: "Share", id: "share" },
 ] as const;
 
 export function generateFieldId() {

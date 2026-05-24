@@ -277,18 +277,18 @@ export default function BuilderLayout({ formId }: { formId: string }) {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex h-screen w-screen flex-col overflow-hidden bg-slate-950 text-zinc-300">
-          <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-800 bg-slate-900 px-4">
+        <div className="flex h-screen w-screen flex-col overflow-hidden bg-zinc-950 text-zinc-300">
+          <header className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4">
             <nav className="flex items-center gap-1.5 text-[12px] font-mono select-none">
               <Link href="/dashboard" className="text-zinc-400 hover:text-zinc-100 transition-colors">
                 Parcha
               </Link>
-              <span className="text-slate-650">/</span>
+              <span className="text-zinc-650">/</span>
               <Link href="/dashboard" className="text-zinc-400 hover:text-zinc-100 transition-colors">
                 Forms
               </Link>
-              <span className="text-slate-650">/</span>
-              <span className="text-slate-200 font-semibold truncate max-w-[200px]" title={formName}>
+              <span className="text-zinc-650">/</span>
+              <span className="text-zinc-200 font-semibold truncate max-w-[200px]" title={formName}>
                 {formName}
               </span>
             </nav>
@@ -309,13 +309,13 @@ export default function BuilderLayout({ formId }: { formId: string }) {
                 )}
               </div>
 
-              <div className="flex items-center rounded-sm border border-slate-800 bg-slate-950 p-0.5">
+              <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-950 p-0.5">
                 {(["visual", "developer"] as const).map((mode) => (
                   <button
                     key={mode}
                     onClick={() => setViewMode(mode)}
                     className={`px-3 py-1 text-xs font-mono rounded-sm transition-colors ${viewMode === mode
-                      ? "bg-slate-800 text-white shadow-sm"
+                      ? "bg-zinc-800 text-zinc-100 shadow-sm"
                       : "text-zinc-500 hover:text-zinc-300"
                       }`}
                   >
@@ -324,7 +324,7 @@ export default function BuilderLayout({ formId }: { formId: string }) {
                 ))}
               </div>
 
-              <div className="flex items-center gap-2 border-l border-slate-800 pl-3 ml-1">
+              <div className="flex items-center gap-2 border-l border-zinc-800 pl-3 ml-1">
                 <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Auto-Save</span>
                 <button
                   onClick={() => setAutoSaveEnabled(!autoSaveEnabled)}
@@ -341,7 +341,7 @@ export default function BuilderLayout({ formId }: { formId: string }) {
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-2 text-xs font-mono rounded-sm border-slate-800 bg-slate-900 text-slate-350 hover:bg-slate-800 hover:text-slate-100 h-7 px-3"
+                className="gap-2 text-xs font-mono rounded-sm border-zinc-800 bg-zinc-900 text-zinc-350 hover:bg-zinc-800 hover:text-zinc-100 h-7 px-3"
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.origin + '/f/' + formId);
                   toast.success("Link copied to clipboard");
@@ -353,7 +353,7 @@ export default function BuilderLayout({ formId }: { formId: string }) {
 
               <Button
                 size="sm"
-                className="gap-2 text-xs font-mono rounded-sm bg-indigo-600 text-white hover:bg-indigo-500 h-7 px-3"
+                className="gap-2 text-xs font-mono rounded-sm bg-zinc-100 text-zinc-900 hover:bg-zinc-200 h-7 px-3"
                 onClick={handleManualSave}
                 disabled={updateSchema.isPending}
               >
@@ -377,17 +377,17 @@ export default function BuilderLayout({ formId }: { formId: string }) {
             )}
 
             <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
-              <div className="flex shrink-0 border-b border-slate-800 bg-slate-950">
+              <div className="flex shrink-0 border-b border-zinc-800 bg-zinc-950">
                 {[
                   { id: "builder", label: "builder.tsx", active: true },
                   { id: "responses", label: "responses.csv", active: false },
                 ].map((tab) => (
                   <button
                     key={tab.id}
-                    className={`flex items-center gap-2 border-r border-slate-800 px-4 py-2.5 text-[11px] font-mono transition-colors ${
+                    className={`flex items-center gap-2 border-r border-zinc-800 px-4 py-2.5 text-[11px] font-mono transition-colors ${
                       tab.active
-                        ? "border-b border-b-indigo-500 bg-slate-900 text-slate-200"
-                        : "text-slate-500 hover:bg-slate-900/50 hover:text-slate-350"
+                        ? "border-b border-b-zinc-100 bg-zinc-900 text-zinc-200"
+                        : "text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-350"
                     }`}
                   >
                     {tab.label}
@@ -409,7 +409,7 @@ export default function BuilderLayout({ formId }: { formId: string }) {
                       </div>
 
                       {selectedField && (
-                        <aside className="h-full w-72 shrink-0 overflow-y-auto border-l border-slate-800 bg-slate-900">
+                        <aside className="h-full w-72 shrink-0 overflow-y-auto border-l border-zinc-800 bg-zinc-900">
                           <PropertiesPanel
                              field={selectedField}
                              onChange={(updates) => updateField(selectedField.id, updates)}
@@ -419,7 +419,7 @@ export default function BuilderLayout({ formId }: { formId: string }) {
                     </div>
                   </ResizablePanel>
 
-                  <ResizableHandle withHandle className="bg-slate-800 h-3 cursor-row-resize hover:bg-slate-700 transition-colors" />
+                  <ResizableHandle withHandle className="bg-zinc-800 h-3 cursor-row-resize hover:bg-zinc-700 transition-colors" />
 
                   <ResizablePanel defaultSize={30} minSize={15} className="bg-[#050B14] overflow-hidden">
                     <ResizableTerminal schema={schema} formName={formName} />
