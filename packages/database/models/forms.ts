@@ -4,6 +4,7 @@ import { usersTable } from "./user";
 import { responsesTable } from "./responses";
 import { analyticsTable } from "./analytics";
 
+export const statusEnum = pgEnum("form_status", ["draft", "published"]);
 export const visibilityEnum = pgEnum("form_visibility", ["public", "unlisted", "unpublished"]);
 export const themeEnum = pgEnum("form_theme", ["standard_dark", "git_commit", "mongo_shell"]);
 
@@ -23,9 +24,13 @@ export const formsTable = pgTable("forms", {
   creatorId: uuid("creator_id").references(() => usersTable.id).notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).unique().notNull(),
-  visibility: visibilityEnum("visibility").default("unpublished").notNull(),
+  status: statusEnum("status").default("draft").notNull(),
+  visibility: visibilityEnum("visibility").default("unlisted").notNull(),
   theme: themeEnum("theme").default("standard_dark").notNull(),
   schema: jsonb("schema").$type<FormSchemaField[]>().notNull(),
+  requireAuth: boolean("require_auth").default(false).notNull(),
+  password: varchar("password", { length: 255 }),
+  successMessage: varchar("success_message", { length: 500 }).default("Response recorded successfully.").notNull(),
   passwordHash: varchar("password_hash", { length: 255 }),
   expiresAt: timestamp("expires_at"),
   maxResponses: integer("max_responses"),

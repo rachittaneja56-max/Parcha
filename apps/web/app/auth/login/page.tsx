@@ -33,7 +33,8 @@ export default function LoginPage() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error("[Login Error]:", error);
+      toast.error("An unexpected error occurred. Please try again.");
     },
   });
 

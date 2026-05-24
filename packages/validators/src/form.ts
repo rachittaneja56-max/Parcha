@@ -24,8 +24,13 @@ export type UpdateSchemaInput = z.infer<typeof UpdateSchemaSchema>;
 export const UpdateSettingsSchema = z.object({
   formId: z.string().uuid(),
   updates: z.object({
+    title: z.string().optional(),
+    status: z.enum(["draft", "published"]).optional(),
     visibility: z.enum(["public", "unlisted", "unpublished"]).optional(),
     theme: z.enum(["standard_dark", "git_commit", "mongo_shell"]).optional(),
+    requireAuth: z.boolean().optional(),
+    password: z.string().nullable().optional(),
+    successMessage: z.string().optional(),
   }),
 });
 export type UpdateSettingsInput = z.infer<typeof UpdateSettingsSchema>;

@@ -34,7 +34,8 @@ export default function RegisterPage() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error("[Register Error]:", error);
+      toast.error("An unexpected error occurred. Please try again.");
     },
   });
 

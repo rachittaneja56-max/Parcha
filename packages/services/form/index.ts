@@ -49,7 +49,7 @@ class FormService {
     return updatedForm;
   }
 
-  public async updateSettings(formId: string, creatorId: string, updates: { visibility?: "public" | "unlisted" | "unpublished", theme?: "standard_dark" | "git_commit" | "mongo_shell" }) {
+  public async updateSettings(formId: string, creatorId: string, updates: { title?: string, status?: "draft" | "published", visibility?: "public" | "unlisted" | "unpublished", theme?: "standard_dark" | "git_commit" | "mongo_shell", requireAuth?: boolean, password?: string | null, successMessage?: string }) {
     const [updatedForm] = await this.dbInstance.update(formsTable)
       .set(updates)
       .where(and(eq(formsTable.id, formId), eq(formsTable.creatorId, creatorId)))

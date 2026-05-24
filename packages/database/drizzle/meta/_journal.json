@@ -15,6 +15,13 @@
       "when": 1779516271714,
       "tag": "0001_regular_dormammu",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779616231476,
+      "tag": "0002_bored_phantom_reporter",
+      "breakpoints": true
     }
   ]
 }

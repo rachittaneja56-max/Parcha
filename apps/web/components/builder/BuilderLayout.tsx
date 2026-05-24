@@ -36,6 +36,7 @@ import { PropertiesPanel } from "./PropertiesPanel";
 import { ResizableTerminal } from "./ResizableTerminal";
 import { CommandPalette } from "./CommandPalette";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "~/components/ui/resizable";
+import { GlobalSettingsPanel, type FormSettings } from "./GlobalSettingsPanel";
 
 export default function BuilderLayout({ formId }: { formId: string }) {
   const router = useRouter();
@@ -47,6 +48,14 @@ export default function BuilderLayout({ formId }: { formId: string }) {
   const [activeDragItem, setActiveDragItem] = useState<PaletteItem | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  const [globalSettings, setGlobalSettings] = useState<FormSettings>({
+    title: "",
+    status: "draft",
+    visibility: "unlisted",
+    requireAuth: false,
+    password: null,
+    successMessage: "Response recorded successfully.",
+  });
 
   const initialLoadDone = useRef(false);
 
@@ -56,19 +65,30 @@ export default function BuilderLayout({ formId }: { formId: string }) {
     { enabled: !!me.data?.user }
   );
   const updateSchema = trpc.form.updateSchema.useMutation();
+  const updateSettings = trpc.form.updateSettings.useMutation();
 
   useEffect(() => {
-    if (formQuery.data?.schema && Array.isArray(formQuery.data.schema)) {
-      const loaded = formQuery.data.schema as any[];
-      const mapped = loaded.map((f) => {
-        const name = f.name || f.label || "untitled";
-        let options = f.options;
-        if ((f.type === "multiple_choice" || f.type === "single_select") && (!options || options.length < 2)) {
-          options = ["Option 1", "Option 2"];
-        }
-        return { ...f, name, options };
-      }) as SchemaField[];
-      setSchema(mapped);
+    if (formQuery.data && !initialLoadDone.current) {
+      if (Array.isArray(formQuery.data.schema)) {
+        const loaded = formQuery.data.schema as any[];
+        const mapped = loaded.map((f) => {
+          const name = f.name || f.label || "untitled";
+          let options = f.options;
+          if ((f.type === "multiple_choice" || f.type === "single_select") && (!options || options.length < 2)) {
+            options = ["Option 1", "Option 2"];
+          }
+          return { ...f, name, options };
+        }) as SchemaField[];
+        setSchema(mapped);
+      }
+      setGlobalSettings({
+        title: formQuery.data.title ?? "",
+        status: (formQuery.data.status as "draft" | "published") ?? "draft",
+        visibility: (formQuery.data.visibility as "public" | "unlisted" | "unpublished") ?? "unlisted",
+        requireAuth: formQuery.data.requireAuth ?? false,
+        password: formQuery.data.password ?? null,
+        successMessage: formQuery.data.successMessage ?? "Response recorded successfully.",
+      });
       initialLoadDone.current = true;
     }
   }, [formQuery.data]);
@@ -87,8 +107,27 @@ export default function BuilderLayout({ formId }: { formId: string }) {
           setTimeout(() => setSaveStatus("idle"), 2000);
         },
         onError: (err) => {
+          console.error("[Auto-save Error]:", err);
           setSaveStatus("error");
-          toast.error(`Auto-save failed: ${err.message}`);
+          toast.error("Auto-save failed due to an unexpected error.");
+        },
+      }
+    );
+  }, 2000);
+
+  const debouncedSaveSettings = useDebouncedCallback((settings: FormSettings) => {
+    setSaveStatus("saving");
+    updateSettings.mutate(
+      { formId, updates: settings },
+      {
+        onSuccess: () => {
+          setSaveStatus("saved");
+          setTimeout(() => setSaveStatus("idle"), 2000);
+        },
+        onError: (err) => {
+          console.error("[Settings Auto-save Error]:", err);
+          setSaveStatus("error");
+          toast.error("Settings auto-save failed.");
         },
       }
     );
@@ -100,24 +139,44 @@ export default function BuilderLayout({ formId }: { formId: string }) {
     }
   }, [schema, debouncedSave, autoSaveEnabled]);
 
+  useEffect(() => {
+    if (initialLoadDone.current && autoSaveEnabled) {
+      debouncedSaveSettings(globalSettings);
+    }
+  }, [globalSettings, debouncedSaveSettings, autoSaveEnabled]);
+
   const handleManualSave = useCallback(() => {
     debouncedSave.cancel();
+    debouncedSaveSettings.cancel();
     setSaveStatus("saving");
     updateSchema.mutate(
       { formId, schema },
       {
         onSuccess: () => {
-          setSaveStatus("saved");
-          toast.success("Schema synced to database.");
-          setTimeout(() => setSaveStatus("idle"), 2000);
+          updateSettings.mutate(
+            { formId, updates: globalSettings },
+            {
+              onSuccess: () => {
+                setSaveStatus("saved");
+                toast.success("Form synced to database.");
+                setTimeout(() => setSaveStatus("idle"), 2000);
+              },
+              onError: (err) => {
+                console.error("[Manual Save Settings Error]:", err);
+                setSaveStatus("error");
+                toast.error("Settings save failed.");
+              }
+            }
+          );
         },
         onError: (err) => {
+          console.error("[Manual Save Error]:", err);
           setSaveStatus("error");
-          toast.error(`Save failed: ${err.message}`);
+          toast.error("Save failed due to an unexpected error.");
         },
       }
     );
-  }, [formId, schema, updateSchema, debouncedSave]);
+  }, [formId, schema, globalSettings, updateSchema, updateSettings, debouncedSave, debouncedSaveSettings]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -199,7 +258,7 @@ export default function BuilderLayout({ formId }: { formId: string }) {
   }
 
   const selectedField = schema.find((f) => f.id === selectedId) ?? null;
-  const formName = formQuery.data?.title ?? "Untitled Form";
+  const formName = globalSettings.title || "Untitled Form";
 
   if (me.isLoading || formQuery.isLoading) {
     return (
@@ -286,7 +345,13 @@ export default function BuilderLayout({ formId }: { formId: string }) {
               activeItem={activeActivity}
               onItemClick={setActiveActivity}
             />
-            <PaletteSidebar />
+            {activeActivity === "components" && <PaletteSidebar />}
+            {activeActivity === "settings" && (
+              <GlobalSettingsPanel
+                settings={globalSettings}
+                onChange={(updates) => setGlobalSettings(prev => ({ ...prev, ...updates }))}
+              />
+            )}
 
             <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
               <div className="flex shrink-0 border-b border-[#1c1c1c] bg-[#0a0a0a]">
