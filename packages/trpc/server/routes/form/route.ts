@@ -120,7 +120,7 @@ export const formRouter = router({
     .input(GetPublicFormSchema)
     .output(z.any())
     .query(async ({ input }) => {
-      const form = await formService.getPublicFormById(input.formIdOrSlug);
+      const form = await formService.getPublicFormById(input.formIdOrSlug, input.password);
       if (!form) {
         throw new Error("Form not found");
       }

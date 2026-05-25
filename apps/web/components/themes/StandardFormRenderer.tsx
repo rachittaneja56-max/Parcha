@@ -105,10 +105,13 @@ export function StandardFormRenderer({
                 isError ? 'border-red-500' : 'border-slate-200'
               }`}
             >
-              <h3 className="text-base font-medium text-slate-700 mb-4">
+              <h3 className="text-base font-medium text-slate-700 mb-2">
                 {field.prompt}
                 {field.required && <span className="text-red-600 ml-1">*</span>}
               </h3>
+              {field.description && (
+                <p className="text-xs text-slate-500 mb-4">{field.description}</p>
+              )}
 
               <div className="w-full">
                 {(field.type === "short_text" || field.type === "email" || field.type === "number" || field.type === "date") && (
@@ -117,7 +120,7 @@ export function StandardFormRenderer({
                     value={answers[field.id] || ""}
                     onChange={(e) => handleAnswer(field.id, e.target.value)}
                     placeholder="Your answer"
-                    className="w-full md:w-1/2 bg-transparent border-b border-slate-300 py-2 focus:border-b-2 focus:border-purple-600 focus:outline-none transition-all text-sm"
+                    className="w-full md:w-1/2 bg-transparent border-b border-slate-300 py-2 focus:border-b-2 focus:border-purple-600 focus:outline-none transition-all text-sm [color-scheme:light] min-h-[40px]"
                   />
                 )}
 

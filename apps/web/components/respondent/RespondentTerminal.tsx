@@ -11,12 +11,14 @@ import { Spinner } from "~/components/ui/spinner";
 export function RespondentTerminal({ formId }: { formId: string }) {
   const router = useRouter();
   
-  const [bootPhase, setBootPhase] = useState<"fetching" | "error" | "ready">("fetching");
+  const [bootPhase, setBootPhase] = useState<"fetching" | "error" | "ready" | "password_prompt">("fetching");
   const [visitorId, setVisitorId] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const [activePassword, setActivePassword] = useState<string | undefined>(undefined);
   
   const { data: formConfig, error: formError, isLoading } = trpc.form.getPublicForm.useQuery(
-    { formIdOrSlug: formId },
+    { formIdOrSlug: formId, password: activePassword },
     { retry: false }
   );
 
@@ -58,8 +60,16 @@ export function RespondentTerminal({ formId }: { formId: string }) {
       return;
     }
 
+    if (formConfig.isPasswordProtected && !formConfig.isAuthorized) {
+      setBootPhase("password_prompt");
+      if (activePassword) {
+        setErrorMsg("Incorrect password. Please try again.");
+      }
+      return;
+    }
+
     setBootPhase("ready");
-  }, [isLoading, sessionLoading, formConfig, formError, router, formId, sessionData?.user]);
+  }, [isLoading, sessionLoading, formConfig, formError, router, formId, sessionData?.user, activePassword]);
 
   const handleTrackView = useCallback(() => {
     if (!formConfig) return;
@@ -102,6 +112,35 @@ export function RespondentTerminal({ formId }: { formId: string }) {
     );
   }
 
+  if (bootPhase === "password_prompt") {
+    return (
+      <div className="flex items-center justify-center min-h-screen w-screen bg-black font-mono text-slate-200">
+        <div className="flex flex-col max-w-md w-full bg-[#050B14] border border-[#0f1b2d] shadow-2xl rounded-md p-8">
+          <h2 className="text-emerald-400 font-bold mb-4">{`> SECURITY PORTAL`}</h2>
+          <p className="text-zinc-400 text-sm mb-6">This form requires a password to access.</p>
+          
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            setActivePassword(passwordInput);
+          }}>
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder="Enter password"
+              className="w-full bg-black border border-[#0f1b2d] focus:border-emerald-500 text-emerald-400 outline-none px-4 py-2 mb-4"
+              autoFocus
+            />
+            {errorMsg && <p className="text-rose-500 text-xs mb-4">{errorMsg}</p>}
+            <button type="submit" className="w-full bg-emerald-900/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-800/50 py-2 transition-colors">
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   if (!formConfig) return null;
 
   return (
@@ -110,7 +149,6 @@ export function RespondentTerminal({ formId }: { formId: string }) {
       schema={formConfig.schema as SchemaField[]}
       formName={formConfig.title || "Parcha95 Form"}
       successMessage={formConfig.successMessage || undefined}
-      password={formConfig.password || null}
       isPreview={false}
       onTrackView={handleTrackView}
       onSubmit={handleSubmit}

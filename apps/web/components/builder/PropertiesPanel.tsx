@@ -57,7 +57,22 @@ export function PropertiesPanel({
               placeholder="e.g. What is your email?"
             />
             <p className="text-[10px] text-muted-foreground/60 font-mono">
-              Shown to respondents in the terminal
+              Shown to respondents as the main question
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+              Description (Optional)
+            </label>
+            <Input
+              value={field.description || ""}
+              onChange={(e) => onChange({ description: e.target.value })}
+              className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100"
+              placeholder="e.g. Please use your work email."
+            />
+            <p className="text-[10px] text-muted-foreground/60 font-mono">
+              Shown below the prompt as helper text
             </p>
           </div>
 

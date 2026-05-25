@@ -48,7 +48,6 @@ export function CodeEditorRenderer({
 
     if (hasError) {
       setErrors(newErrors);
-      // Auto-focus the first field with an error in the sidebar
       const firstErrIndex = schema.findIndex((f) => newErrors[f.id]);
       if (firstErrIndex !== -1) {
         setActiveFieldIndex(firstErrIndex);
@@ -81,10 +80,28 @@ export function CodeEditorRenderer({
   const activeField = schema[activeFieldIndex];
   const numErrors = Object.keys(errors).length;
 
+  if (isPreview) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center bg-[#1e1e1e] text-[#dcdcdc] font-mono p-8 text-center select-none min-h-[500px]">
+        <div className="bg-[#252526] border border-[#3c3c3c] p-8 rounded max-w-md w-full shadow-2xl space-y-4">
+          <div className="text-3xl mb-4">⚠️</div>
+          <h2 className="text-lg font-bold text-[#e5c07b]">Preview Not Available</h2>
+          <p className="text-sm text-[#858585] leading-relaxed">
+            The Code Editor theme is optimized for full-screen immersive experiences and cannot be previewed in this small pane.
+          </p>
+          <div className="pt-4 border-t border-[#3c3c3c] mt-4">
+            <p className="text-xs text-[#6a9955]">
+              {"// Please publish the form and view it via the public link."}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#1e1e1e] text-[#dcdcdc] font-mono flex flex-col select-none overflow-hidden h-screen">
+    <div className="h-full bg-[#1e1e1e] text-[#dcdcdc] font-mono flex flex-col select-none overflow-hidden min-h-[500px]">
       
-      {/* VS Code Title Bar */}
       <div className="bg-[#3c3c3c] h-[35px] shrink-0 border-b border-[#252526] flex items-center justify-between px-3 text-xs text-[#a3a3a3]">
         <div className="flex items-center gap-2">
           <span className="text-[#007acc] text-sm">⎋</span>
@@ -94,7 +111,6 @@ export function CodeEditorRenderer({
           🔎 {title} (Workspace)
         </div>
         <div className="flex items-center gap-2.5">
-          {/* play button / Run Action */}
           <button 
             onClick={validateAndSubmit}
             className="flex items-center gap-1 px-2.5 py-0.5 bg-[#007acc] text-white hover:bg-[#0062a3] active:bg-[#004e82] rounded text-[11px] font-bold cursor-pointer transition-colors shadow-sm select-none"
@@ -105,7 +121,6 @@ export function CodeEditorRenderer({
         </div>
       </div>
 
-      {/* Main VS Code Workspace */}
       <div className="flex-1 flex overflow-hidden">
         
         <div className="w-[48px] bg-[#333333] shrink-0 border-r border-[#252526] flex flex-col items-center py-4 gap-5 text-lg text-[#858585]">
@@ -116,8 +131,7 @@ export function CodeEditorRenderer({
           <div className="cursor-pointer hover:text-white" title="Extensions">🧩</div>
         </div>
 
-        {/* Sidebar (File Explorer listing questions) */}
-        <div className="w-[220px] bg-[#252526] shrink-0 border-r border-[#1e1e1e] hidden sm:flex flex-col select-none">
+        <div className="w-[220px] bg-[#252526] shrink-0 border-r border-[#1e1e1e] hidden lg:flex flex-col select-none">
           <div className="px-3 py-2 text-[10px] uppercase font-bold text-[#808080] tracking-wider border-b border-[#1e1e1e] flex justify-between items-center">
             <span>Explorer</span>
             <span>•••</span>
@@ -126,7 +140,6 @@ export function CodeEditorRenderer({
             <span>📂</span> <span className="truncate">{title.toLowerCase().replace(/\s+/g, "-")}</span>
           </div>
           
-          {/* Sidebar file listing */}
           <div className="flex-1 overflow-y-auto">
             {schema.map((field, idx) => {
               const isActive = idx === activeFieldIndex;
@@ -154,7 +167,6 @@ export function CodeEditorRenderer({
           </div>
         </div>
 
-        {/* Main Editor Panel */}
         <div className="flex-1 flex flex-col bg-[#1e1e1e] overflow-hidden">
           
           {/* Tab Headers */}
@@ -169,8 +181,7 @@ export function CodeEditorRenderer({
             <div className="flex-1" />
           </div>
 
-          {/* Active File Code Editor Body */}
-          <div className="flex-1 p-6 overflow-y-auto select-text font-mono text-sm leading-relaxed">
+          <div className="flex-1 p-6 overflow-auto select-text font-mono text-sm leading-relaxed">
             {isSubmitted ? (
               <div className="h-full flex flex-col justify-center max-w-lg mx-auto py-12 space-y-4">
                 <div className="text-[#6a9955] font-normal">
@@ -213,8 +224,7 @@ export function CodeEditorRenderer({
             ) : activeField ? (
               <div className="space-y-6">
                 
-                {/* Code Comments block explaining survey question */}
-                <div className="text-[#6a9955] leading-normal select-none">
+                <div className="text-[#6a9955] leading-normal select-none whitespace-pre">
                   <span>{"/**"}</span>
                   <br />
                   <span>{` * SURVEY: ${title}`}</span>
@@ -232,37 +242,39 @@ export function CodeEditorRenderer({
                   <span>{" */"}</span>
                 </div>
 
-                {/* The Code block input rendering */}
-                <div className="bg-[#181818] border border-[#2d2d2d] rounded p-6 space-y-6 max-w-xl shadow-inner font-mono text-sm leading-relaxed">
+                <div className="bg-[#181818] border border-[#2d2d2d] rounded p-6 space-y-6 min-w-fit max-w-2xl shadow-inner font-mono text-sm leading-relaxed whitespace-pre">
                   <div>
                     <span className="text-[#6a9955]">{`// Prompt: ${activeField.prompt}`}</span>
                     {activeField.required && <span className="text-red-500 font-bold ml-1">*</span>}
+                    {activeField.description && (
+                      <div className="text-[#6a9955] mt-1">{`// Desc: ${activeField.description}`}</div>
+                    )}
                   </div>
 
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2 select-none">
+                  <div className="flex flex-col gap-3 w-full">
+                    <div className="flex flex-wrap items-center gap-2 select-none w-full">
                       <span className="text-[#c678dd]">const</span>
                       <span className="text-[#e06c75]">answer</span>
                       <span>: </span>
                       <span className="text-[#abb2bf]">{activeField.type === "multiple_choice" ? "string[]" : "string"}</span>
                       <span> = </span>
-                    </div>
 
-                    {/* Inputs */}
-                    <div className="pl-6 w-full">
                       {(activeField.type === "short_text" || activeField.type === "email" || activeField.type === "number" || activeField.type === "date") && (
-                        <div className="flex items-center text-[#98c379] font-mono w-full">
+                        <div className="flex items-center text-[#98c379] font-mono flex-1 min-w-[200px]">
                           <span>"</span>
                           <input
                             type={activeField.type === "number" ? "number" : activeField.type === "email" ? "email" : activeField.type === "date" ? "date" : "text"}
                             value={answers[activeField.id] || ""}
                             onChange={(e) => handleAnswer(activeField.id, e.target.value)}
-                            className="bg-transparent border-none text-[#98c379] font-mono text-sm focus:outline-none focus:ring-0 caret-white select-text w-full max-w-md px-0.5 py-0"
+                            className="bg-transparent border-none text-[#98c379] font-mono text-sm focus:outline-none focus:ring-0 caret-white select-text w-full px-0.5 py-0 [color-scheme:dark]"
                             placeholder="Type input here..."
                           />
                           <span>";</span>
                         </div>
                       )}
+                    </div>
+
+                    <div className="pl-6 w-full">
 
                       {activeField.type === "long_text" && (
                         <div className="flex items-start text-[#98c379] font-mono w-full">
@@ -338,7 +350,6 @@ export function CodeEditorRenderer({
                       )}
                     </div>
 
-                    {/* Problem / Error inline block */}
                     {errors[activeField.id] && (
                       <div className="pl-6 pt-3 text-red-400 flex items-start gap-1.5 select-none leading-snug">
                         <span>❌</span>
@@ -354,7 +365,6 @@ export function CodeEditorRenderer({
                   </div>
                 </div>
 
-                {/* Sidebar Navigation Helpers */}
                 <div className="flex gap-4 select-none pt-4">
                   <button
                     onClick={() => {
@@ -392,7 +402,6 @@ export function CodeEditorRenderer({
 
       </div>
 
-      {/* VS Code Bottom Status Bar */}
       <div className="bg-[#007acc] h-[25px] shrink-0 flex items-center justify-between px-3 text-xs text-white select-none leading-none z-20">
         <div className="flex items-center gap-3">
           <span className="font-bold">✓ Ready</span>

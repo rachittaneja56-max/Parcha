@@ -10,7 +10,6 @@ export interface ThemeRendererProps {
   schema: SchemaField[];
   formName: string;
   successMessage?: string;
-  password?: string | null;
   isPreview?: boolean;
   onTrackView?: () => void;
   onSubmit?: (answers: Record<string, string>, honeypot?: string) => Promise<void>;
@@ -20,14 +19,13 @@ export function TerminalRenderer({
   schema,
   formName,
   successMessage = "Response recorded successfully.",
-  password,
   isPreview = false,
   onTrackView,
   onSubmit,
 }: ThemeRendererProps) {
   const [bootPhase, setBootPhase] = useState<
-    "password_prompt" | "booting" | "live" | "submitting" | "done"
-  >(password && !isPreview ? "password_prompt" : isPreview ? "live" : "booting");
+    "booting" | "live" | "submitting" | "done"
+  >(isPreview ? "live" : "booting");
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerState>({});
@@ -103,18 +101,6 @@ export function TerminalRenderer({
     if (e.key === "Enter") {
       e.preventDefault();
       const val = currentInput.trim();
-
-      if (bootPhase === "password_prompt") {
-        if (val === password) {
-          addLine(<p key={Date.now()} className="text-emerald-400 font-bold mt-2">{`> ACCESS GRANTED.`}</p>);
-          setCurrentInput("");
-          setBootPhase("booting");
-        } else {
-          addLine(<p key={Date.now()} className="text-rose-500 font-bold mt-2">{`> ACCESS DENIED.`}</p>);
-          setCurrentInput("");
-        }
-        return;
-      }
 
       if (bootPhase === "booting") {
         setBootPhase("live");
@@ -242,6 +228,7 @@ export function TerminalRenderer({
         liveLines.push(
           <div key={`active-${field.id}`} className="border-l-2 border-emerald-500 pl-4 py-1 mt-6 mb-2">
             <p className="text-emerald-400 font-bold text-base">{`> ${field.prompt}${field.required ? " *" : ""}`}</p>
+            {field.description && <p className="text-emerald-400/60 mt-1">{`> ${field.description}`}</p>}
             {(field.type === "single_select" || field.type === "multiple_choice") && field.options && (
               <div className="mt-3 pl-4 flex flex-col gap-1.5 text-zinc-200">
                 {field.options.map((opt, optIdx) => (
@@ -316,16 +303,6 @@ export function TerminalRenderer({
           {lines}
           {liveLines}
 
-          {bootPhase === "password_prompt" && (
-            <div className="mt-4 flex items-center text-emerald-400 font-bold">
-              <span className="mr-2">{`> Password:`}</span>
-              <span className="text-zinc-100 tracking-wide">
-                {"*".repeat(currentInput.length)}
-              </span>
-              <span className="text-emerald-400 animate-pulse font-bold ml-1">█</span>
-            </div>
-          )}
-
           {bootPhase === "live" && schema.length > 0 && (
             <div className="mt-4 flex flex-col gap-2">
               {errorMsg && (
@@ -343,7 +320,7 @@ export function TerminalRenderer({
         </div>
       </div>
 
-      {(bootPhase === "password_prompt" || bootPhase === "booting" || bootPhase === "live" || bootPhase === "done") && (
+      {(bootPhase === "booting" || bootPhase === "live" || bootPhase === "done") && (
         <>
           <input
             ref={inputRef}

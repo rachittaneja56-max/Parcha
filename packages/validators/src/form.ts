@@ -15,6 +15,7 @@ export const FieldSchema = z.object({
   options: z.array(z.string()).optional(),
   conditional_logic: z.record(z.string(), z.any()).optional(),
   page_number: z.number().optional(),
+  description: z.string().optional(),
 });
 export type FieldSchemaType = z.infer<typeof FieldSchema>;
 
@@ -45,5 +46,6 @@ export type GetFormByIdInput = z.infer<typeof GetFormByIdSchema>;
 
 export const GetPublicFormSchema = z.object({
   formIdOrSlug: z.string(),
+  password: z.string().optional(),
 });
 export type GetPublicFormInput = z.infer<typeof GetPublicFormSchema>;

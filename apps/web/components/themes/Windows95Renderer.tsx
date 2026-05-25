@@ -87,10 +87,9 @@ export function Windows95Renderer({
   const description = form?.description || "";
 
   return (
-    <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col font-sans select-none overflow-y-auto">
+    <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-y-auto">
       <div className="w-full max-w-xl mx-auto bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-2xl flex flex-col">
         
-        {/* Title Bar */}
         <div className="bg-[#000080] text-white font-bold px-2 py-1 flex justify-between items-center mb-2 select-none">
           <div className="flex items-center gap-1.5 text-xs sm:text-sm">
             <span className="text-xs">💾</span>
@@ -104,7 +103,6 @@ export function Windows95Renderer({
           </button>
         </div>
 
-        {/* Outer Dialog Box / Window Workspace */}
         <div className="p-4 space-y-6">
           {isSubmitted ? (
             <div className="bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-6 text-center space-y-4">
@@ -124,14 +122,12 @@ export function Windows95Renderer({
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Form Intro Panel */}
-              <div className="bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-4 space-y-2 select-text">
+              <div className="bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-4 space-y-2 select-text shadow-sm">
                 <h1 className="text-xl font-bold text-[#000080]">{title}</h1>
-                {description && <p className="text-xs text-slate-600 font-sans leading-normal">{description}</p>}
-                <div className="text-[10px] text-slate-500 pt-2 font-mono">* Fields marked with an asterisk are required.</div>
+                {description && <p className="text-xs text-slate-600 font-['Tahoma',_'Verdana',_'sans-serif'] leading-normal">{description}</p>}
+                <div className="text-[10px] text-slate-500 pt-2 font-['Tahoma',_'Verdana',_'sans-serif']">* Fields marked with an asterisk are required.</div>
               </div>
 
-              {/* Form Questions */}
               <div className="space-y-5">
                 {schema.map((field) => {
                   const isError = !!errors[field.id];
@@ -143,37 +139,40 @@ export function Windows95Renderer({
                         isError ? "bg-red-50/15" : ""
                       }`}
                     >
-                      {/* Label with Folder/File Icon */}
-                      <label className="flex items-start gap-2 text-sm font-bold text-slate-900 select-none mb-2 leading-tight">
-                        {getFieldIcon(field.type)}
-                        <span>
-                          {field.prompt}
-                          {field.required && <span className="text-red-700 ml-1 font-bold">*</span>}
-                        </span>
-                      </label>
+                      <div className="flex flex-col mb-2">
+                        <label className="flex items-start gap-2 text-sm font-bold text-slate-900 select-none leading-tight">
+                          {getFieldIcon(field.type)}
+                          <span>
+                            {field.prompt}
+                            {field.required && <span className="text-red-700 ml-1 font-bold">*</span>}
+                          </span>
+                        </label>
+                        {field.description && (
+                          <div className="text-xs text-slate-700 mt-1 pl-6">
+                            {field.description}
+                          </div>
+                        )}
+                      </div>
 
                       <div className="w-full mt-2 pl-6">
-                        {/* Text / Number / Email / Date Inputs */}
                         {(field.type === "short_text" || field.type === "email" || field.type === "number" || field.type === "date") && (
                           <input
                             type={field.type === "number" ? "number" : field.type === "email" ? "email" : field.type === "date" ? "date" : "text"}
                             value={answers[field.id] || ""}
                             onChange={(e) => handleAnswer(field.id, e.target.value)}
-                            className="w-full bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-2 outline-none font-mono text-sm text-slate-900 focus:bg-white"
+                            className="w-full bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-2 outline-none font-['Tahoma',_'Verdana',_'sans-serif'] text-sm text-slate-900 focus:bg-white [color-scheme:light] min-h-[36px]"
                           />
                         )}
 
-                        {/* Long Text Input */}
                         {field.type === "long_text" && (
                           <textarea
                             value={answers[field.id] || ""}
                             onChange={(e) => handleAnswer(field.id, e.target.value)}
                             rows={3}
-                            className="w-full bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-2 outline-none font-mono text-sm text-slate-900 resize-y focus:bg-white"
+                            className="w-full bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-2 outline-none font-['Tahoma',_'Verdana',_'sans-serif'] text-sm text-slate-900 resize-y focus:bg-white"
                           />
                         )}
 
-                        {/* Single Select */}
                         {field.type === "single_select" && field.options && (
                           <div className="space-y-1.5 mt-1 select-none">
                             {field.options.map((opt: string, index: number) => {
@@ -194,7 +193,6 @@ export function Windows95Renderer({
                           </div>
                         )}
 
-                        {/* Multiple Choice */}
                         {field.type === "multiple_choice" && field.options && (
                           <div className="space-y-1.5 mt-1 select-none">
                             {field.options.map((opt: string, index: number) => {
@@ -222,7 +220,7 @@ export function Windows95Renderer({
                           </div>
                         )}
 
-                        {/* Error State */}
+                    
                         {isError && (
                           <div className="text-red-700 text-xs font-bold mt-2 flex items-center gap-1.5">
                             <span>❌</span>
@@ -235,7 +233,6 @@ export function Windows95Renderer({
                 })}
               </div>
 
-              {/* Submit Action */}
               {schema.length > 0 && (
                 <div className="flex justify-end mt-6 pt-4 border-t border-slate-400">
                   <button

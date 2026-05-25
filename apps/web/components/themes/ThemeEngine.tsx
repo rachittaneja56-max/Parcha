@@ -5,7 +5,7 @@ import { StandardFormRenderer } from "./StandardFormRenderer";
 import { Windows95Renderer } from "./Windows95Renderer";
 import { CodeEditorRenderer } from "./CodeEditorRenderer";
 
-export interface ThemeEngineProps extends Omit<ThemeRendererProps, "theme"> {
+export interface ThemeEngineProps extends Omit<ThemeRendererProps, "theme" | "password"> {
   theme: "terminal" | "windowsxp" | "standard" | "code_editor" | string;
 }
 

@@ -5,6 +5,7 @@ import { responsesTable } from "@repo/database/models/responses";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { FieldSchema } from "@repo/validators";
+import bcrypt from "bcrypt";
 
 const fieldSchemaArray = z.array(FieldSchema);
 
@@ -19,7 +20,7 @@ class FormService {
       title,
       theme,
       slug,
-      status: "published",
+      status: "draft",
       visibility: "public",
       schema: [],
       updatedAt: new Date(),
@@ -44,8 +45,19 @@ class FormService {
   }
 
   public async updateSettings(formId: string, creatorId: string, updates: { title?: string, status?: "draft" | "published", visibility?: "public" | "unlisted" | "unpublished", theme?: "terminal" | "windowsxp" | "standard" | "code_editor", requireAuth?: boolean, password?: string | null, successMessage?: string }) {
+    const finalUpdates: any = { ...updates };
+    
+    if (updates.password !== undefined) {
+      if (updates.password) {
+        finalUpdates.passwordHash = await bcrypt.hash(updates.password, 10);
+      } else {
+        finalUpdates.passwordHash = null;
+      }
+      finalUpdates.password = null;
+    }
+
     const [updatedForm] = await this.dbInstance.update(formsTable)
-      .set(updates)
+      .set(finalUpdates)
       .where(and(eq(formsTable.id, formId), eq(formsTable.creatorId, creatorId)))
       .returning();
       
@@ -83,7 +95,7 @@ class FormService {
     });
   }
 
-  public async getPublicFormById(formIdOrSlug: string) {
+  public async getPublicFormById(formIdOrSlug: string, providedPassword?: string) {
     const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(formIdOrSlug);
     
     const [form] = await this.dbInstance.update(formsTable)
@@ -96,12 +108,28 @@ class FormService {
         status: formsTable.status,
         requireAuth: formsTable.requireAuth,
         password: formsTable.password,
+        passwordHash: formsTable.passwordHash,
         schema: formsTable.schema,
         successMessage: formsTable.successMessage,
         theme: formsTable.theme,
       });
 
     if (!form) return null;
+
+    let isAuthorized = true;
+    if (form.passwordHash) {
+      if (!providedPassword) {
+        isAuthorized = false;
+      } else {
+        const isValid = await bcrypt.compare(providedPassword, form.passwordHash);
+        isAuthorized = isValid;
+      }
+    } else if (form.password) {
+      // Legacy unhashed passwords fallback
+      if (providedPassword !== form.password) {
+        isAuthorized = false;
+      }
+    }
 
     const mappedTheme = 
       form.theme === "silicon_valley" || form.theme === "silicon_valley_3d"
@@ -111,8 +139,16 @@ class FormService {
         : form.theme;
 
     return {
-      ...form,
+      id: form.id,
+      title: form.title,
+      slug: form.slug,
+      status: form.status,
+      requireAuth: form.requireAuth,
       theme: mappedTheme as "terminal" | "windowsxp" | "standard" | "code_editor",
+      successMessage: isAuthorized ? form.successMessage : undefined,
+      schema: isAuthorized ? form.schema : [],
+      isPasswordProtected: !!(form.passwordHash || form.password),
+      isAuthorized,
     };
   }
 
