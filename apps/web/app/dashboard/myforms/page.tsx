@@ -13,14 +13,16 @@ export default function MyFormsPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const me = trpc.auth.me.useQuery(undefined, { retry: false });
+  const me = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 0 });
   const myForms = trpc.form.getMyForms.useQuery(undefined, {
     enabled: !!me.data?.user,
   });
 
   useEffect(() => {
-    if (me.isError) router.replace("/auth/login");
-  }, [me.isError, router]);
+    if (!me.isLoading && (me.isError || !me.data?.user)) {
+      router.replace("/auth/login");
+    }
+  }, [me.isLoading, me.isError, me.data, router]);
 
   if (me.isLoading) {
     return (

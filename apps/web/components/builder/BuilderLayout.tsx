@@ -71,7 +71,7 @@ export default function BuilderLayout({ formId }: { formId: string }) {
     setOrigin(window.location.origin);
   }, []);
 
-  const me = trpc.auth.me.useQuery(undefined, { retry: false });
+  const me = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 0 });
   const formQuery = trpc.form.getFormById.useQuery(
     { formId },
     { enabled: !!me.data?.user }
@@ -107,8 +107,10 @@ export default function BuilderLayout({ formId }: { formId: string }) {
   }, [formQuery.data]);
 
   useEffect(() => {
-    if (me.isError) router.replace("/auth/login");
-  }, [me.isError, router]);
+    if (!me.isLoading && (me.isError || !me.data?.user)) {
+      router.replace("/auth/login");
+    }
+  }, [me.isLoading, me.isError, me.data, router]);
 
   const debouncedSave = useDebouncedCallback((currentSchema: SchemaField[]) => {
     setSaveStatus("saving");

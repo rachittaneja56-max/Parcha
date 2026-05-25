@@ -22,7 +22,7 @@ export function RespondentTerminal({ formId }: { formId: string }) {
     { retry: false }
   );
 
-  const { data: sessionData, isLoading: sessionLoading } = trpc.auth.me.useQuery(undefined, { retry: false });
+  const { data: sessionData, isLoading: sessionLoading } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 0 });
   
   const { mutate: submitResponse, mutateAsync: submitResponseAsync } = trpc.response.submit.useMutation();
   const { mutate: trackView } = trpc.response.trackView.useMutation();

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +16,15 @@ import { trpc } from "~/trpc/client";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const utils = trpc.useUtils();
+
+  const me = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 0 });
+
+  useEffect(() => {
+    if (me.data?.user) {
+      router.push("/dashboard");
+    }
+  }, [me.data, router]);
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(RegisterSchema),
@@ -28,13 +38,15 @@ export default function RegisterPage() {
   const googleProvider = providers.data?.find((p) => p.provider === "GOOGLE_OAUTH");
 
   const register = trpc.auth.register.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Account created! Redirecting to Creator Dashboard...");
-      window.location.href = "/dashboard";
+      await utils.auth.me.invalidate();
+      router.replace("/dashboard");
+      router.refresh();
     },
     onError: (error) => {
       console.error("[Register Error]:", error);
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error(error.message || "An unexpected error occurred. Please try again.");
     },
   });
 

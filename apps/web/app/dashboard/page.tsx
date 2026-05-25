@@ -95,16 +95,27 @@ function CreateFormDialog({
 
 export default function DashboardPage() {
   const router = useRouter();
+  const utils = trpc.useUtils();
   const [createOpen, setCreateOpen] = useState(false);
 
-  const me = trpc.auth.me.useQuery(undefined, { retry: false });
+  const me = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 0 });
   const myForms = trpc.form.getMyForms.useQuery(undefined, {
     enabled: !!me.data?.user,
   });
 
+  const logout = trpc.auth.logout.useMutation({
+    onSuccess: async () => {
+      await utils.auth.me.invalidate();
+      router.replace("/");
+      router.refresh();
+    }
+  });
+
   useEffect(() => {
-    if (me.isError) router.replace("/auth/login");
-  }, [me.isError, router]);
+    if (!me.isLoading && (me.isError || !me.data?.user)) {
+      router.replace("/auth/login");
+    }
+  }, [me.isLoading, me.isError, me.data, router]);
 
   useEffect(() => {
     if (me.data?.user && !me.data.user.emailVerified) {
@@ -133,12 +144,21 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans">
       <main className="mx-auto max-w-5xl px-6 py-12">
-        <nav className="flex items-center gap-2 text-sm text-zinc-400 font-mono mb-8">
-          <Link href="/" className="hover:text-zinc-100 transition-colors">
-            Parcha95
-          </Link>
-          <span className="text-zinc-600">/</span>
-          <span className="text-zinc-100">Command Center</span>
+        <nav className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-2 text-sm text-zinc-400 font-mono">
+            <Link href="/" className="hover:text-zinc-100 transition-colors">
+              Parcha95
+            </Link>
+            <span className="text-zinc-600">/</span>
+            <span className="text-zinc-100">Command Center</span>
+          </div>
+          <button 
+            onClick={() => logout.mutate()} 
+            disabled={logout.isPending}
+            className="text-xs font-mono text-zinc-400 hover:text-white transition-colors disabled:opacity-50"
+          >
+            {logout.isPending ? "Signing out..." : "Sign Out"}
+          </button>
         </nav>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">

@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, type LoginInput } from "@repo/validators";
 import { useForm } from "react-hook-form";
@@ -15,6 +16,17 @@ import { trpc } from "~/trpc/client";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const utils = trpc.useUtils();
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
+  const me = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 0 });
+
+  useEffect(() => {
+    if (me.data?.user) {
+      router.replace(callbackUrl);
+    }
+  }, [callbackUrl, me.data, router]);
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(LoginSchema),
@@ -28,12 +40,14 @@ export default function LoginPage() {
   const googleProvider = providers.data?.find((p) => p.provider === "GOOGLE_OAUTH");
 
   const login = trpc.auth.login.useMutation({
-    onSuccess: () => {
-      window.location.href = "/";
+    onSuccess: async () => {
+      await utils.auth.me.invalidate();
+      router.replace(callbackUrl);
+      router.refresh();
     },
     onError: (error) => {
       console.error("[Login Error]:", error);
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error(error.message || "An unexpected error occurred. Please try again.");
     },
   });
 

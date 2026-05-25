@@ -174,7 +174,7 @@ export const authRouter = router({
     }),
 
   logout: publicProcedure
-    .meta({ openapi: { method: "POST", path: getPath("/logout"), protect: true, tags: TAGS } })
+    .meta({ openapi: { method: "POST", path: getPath("/logout"), protect: false, tags: TAGS } })
     .input(zodUndefinedModel)
     .output(z.any())
     .mutation(async ({ ctx }) => {
