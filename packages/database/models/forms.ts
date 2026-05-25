@@ -20,6 +20,7 @@ export const formsTable = pgTable("forms", {
   visibility: visibilityEnum("visibility").default("unlisted").notNull(),
   theme: themeEnum("theme").default("terminal").notNull(),
   schema: jsonb("schema").$type<FormSchemaField[]>().notNull(),
+  views: integer("views").default(0).notNull(),
   requireAuth: boolean("require_auth").default(false).notNull(),
   password: varchar("password", { length: 255 }),
   successMessage: varchar("success_message", { length: 500 }).default("Response recorded successfully.").notNull(),

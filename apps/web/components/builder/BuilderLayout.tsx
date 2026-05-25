@@ -288,7 +288,11 @@ export default function BuilderLayout({ formId }: { formId: string }) {
               </Link>
               <span className="text-zinc-650">/</span>
               <Link href="/dashboard" className="text-zinc-400 hover:text-zinc-100 transition-colors">
-                Forms
+                Command Center
+              </Link>
+              <span className="text-zinc-650">/</span>
+              <Link href="/dashboard/myforms" className="text-zinc-400 hover:text-zinc-100 transition-colors">
+                My Forms
               </Link>
               <span className="text-zinc-650">/</span>
               <span className="text-zinc-200 font-semibold truncate max-w-[200px]" title={formName}>

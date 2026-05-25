@@ -124,23 +124,25 @@ export default function DashboardPage() {
   const isVerified = me.data.user.emailVerified;
   const forms: any[] = myForms.data ?? [];
 
+  const totalViews = forms.reduce((acc, form) => acc + (form.views || 0), 0);
+  const totalResponses = forms.reduce((acc, form) => acc + (form.responseCount || 0), 0);
+  const conversionRate = totalViews > 0 ? ((totalResponses / totalViews) * 100).toFixed(1) : "0.0";
+
+  const activeForms = forms.slice(0, 4);
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 font-sans">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans">
       <main className="mx-auto max-w-5xl px-6 py-12">
         <nav className="flex items-center gap-2 text-sm text-zinc-400 font-mono mb-8">
           <Link href="/" className="hover:text-zinc-100 transition-colors">
             Parcha
           </Link>
           <span className="text-zinc-600">/</span>
-          <Link href="/dashboard" className="hover:text-zinc-100 transition-colors">
-            Dashboard
-          </Link>
-          <span className="text-zinc-600">/</span>
-          <span className="text-zinc-100">Your Forms</span>
+          <span className="text-zinc-100">Command Center</span>
         </nav>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight">Your Forms</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Command Center</h1>
           <Button
             onClick={() => setCreateOpen(true)}
             disabled={!isVerified}
@@ -149,6 +151,31 @@ export default function DashboardPage() {
             <Plus className="h-4 w-4" />
             Create Form
           </Button>
+        </div>
+
+        {/* Global Metrics Strip */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+            <h3 className="text-sm font-medium text-zinc-400">Total Views</h3>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-100">{totalViews}</p>
+          </div>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+            <h3 className="text-sm font-medium text-zinc-400">Total Responses</h3>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-100">{totalResponses}</p>
+          </div>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+            <h3 className="text-sm font-medium text-zinc-400">Global Conversion</h3>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-emerald-400">{conversionRate}%</p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-medium text-zinc-100">Recently Active Forms</h2>
+          {forms.length > 0 && (
+            <Link href="/dashboard/myforms" className="text-sm text-emerald-400 hover:text-emerald-300 font-medium">
+              View All Forms &rarr;
+            </Link>
+          )}
         </div>
 
         {myForms.isLoading ? (
@@ -174,9 +201,11 @@ export default function DashboardPage() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {forms.map((form) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            {activeForms.map((form) => {
               const isPublished = form.status === "published";
+              const formViews = form.views || 0;
+              const formResponses = form.responseCount || 0;
 
               return (
                 <div
@@ -203,17 +232,32 @@ export default function DashboardPage() {
                         {isPublished ? "Published" : "Draft"}
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-500 font-mono mt-3">
-                      {form.id.split('-')[0]} • {new Date(form.createdAt).toLocaleDateString()}
-                    </p>
+                    <div className="flex items-center gap-4 text-xs font-mono mt-4">
+                      <div className="flex flex-col">
+                        <span className="text-zinc-500">Views</span>
+                        <span className="text-zinc-300 font-medium">{formViews}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-zinc-500">Responses</span>
+                        <span className="text-zinc-300 font-medium">{formResponses}</span>
+                      </div>
+                      <div className="flex flex-col border-l border-zinc-800 pl-4">
+                        <span className="text-zinc-500">Updated</span>
+                        <span className="text-zinc-300">{new Date(form.updatedAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-8 pt-4 border-t border-zinc-800/60">
-                    <Link href={isVerified ? `/dashboard/builder/${form.id}` : "#"} className="block">
+                  <div className="mt-6 pt-4 border-t border-zinc-800/60 flex items-center justify-between">
+                    <Link href={`/dashboard/builder/${form.id}/responses`} className="text-xs font-mono text-zinc-400 hover:text-zinc-200 transition-colors">
+                      Analytics &rarr;
+                    </Link>
+                    <Link href={isVerified ? `/dashboard/builder/${form.id}` : "#"}>
                       <Button
+                        size="sm"
                         variant="secondary"
                         disabled={!isVerified}
-                        className="w-full bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-zinc-100 border border-zinc-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-zinc-100 border border-zinc-700/50 disabled:opacity-50 disabled:cursor-not-allowed px-6"
                       >
                         Edit
                       </Button>
