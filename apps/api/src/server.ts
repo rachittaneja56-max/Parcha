@@ -6,7 +6,6 @@ import rateLimit from "express-rate-limit";
 
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { createOpenApiExpressMiddleware } from "trpc-to-openapi";
-import { apiReference } from "@scalar/express-api-reference";
 
 import { serverRouter, createContext } from "@repo/trpc/server";
 import { openApiDocument } from "@repo/trpc/server/openapi";
@@ -76,7 +75,14 @@ app.get("/api/openapi.json", (req, res) => {
 });
 
 logger.debug(`docs: ${env.BASE_URL}/docs`);
-app.use("/docs", apiReference({ url: "/api/openapi.json" }));
+app.use("/docs", async (req, res, next) => {
+  try {
+    const { apiReference } = await (new Function('return import("@scalar/express-api-reference")'))();
+    apiReference({ url: "/api/openapi.json" })(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+});
 
 app.use(
   "/api",
