@@ -17,10 +17,13 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
-import { Save, Check, Loader2, Share2, BarChart } from "lucide-react";
+import { Save, Check, Loader2, Share2, BarChart, Settings, PenTool, Download, Copy } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
 import { TooltipProvider } from "~/components/ui/tooltip";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import QRCode from "react-qr-code";
 import { trpc } from "~/trpc/client";
 
 import {
@@ -39,11 +42,12 @@ import { CommandPalette } from "./CommandPalette";
 import { PreviewComponent } from "./PreviewComponent";
 import { FloatingPreviewWidget } from "./FloatingPreviewWidget";
 import { GlobalSettingsPanel, type FormSettings } from "./GlobalSettingsPanel";
+import { ResponsesAnalytics } from "./ResponsesAnalytics";
 
 export default function BuilderLayout({ formId }: { formId: string }) {
   const router = useRouter();
 
-  const [activeActivity, setActiveActivity] = useState("components");
+  const [activeView, setActiveView] = useState<'build' | 'settings' | 'analytics'>('build');
   const [schema, setSchema] = useState<SchemaField[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -346,30 +350,56 @@ export default function BuilderLayout({ formId }: { formId: string }) {
                 </div>
               </Button>
 
-              <Link href={`/dashboard/builder/${formId}/responses`}>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="gap-2 text-xs font-mono rounded-sm border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 h-7 px-3"
-                >
-                  <BarChart className="h-3.5 w-3.5" />
-                  Analytics
-                </Button>
-              </Link>
-
-              <Button
-                size="sm"
-                variant="outline"
-                className="gap-2 text-xs font-mono rounded-sm border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 h-7 px-3"
-                onClick={() => {
-                  const shareTarget = formQuery.data?.slug || formId;
-                  navigator.clipboard.writeText(window.location.origin + '/f/' + shareTarget);
-                  toast.success("Link copied to clipboard");
-                }}
-              >
-                <Share2 className="h-3.5 w-3.5" />
-                Share
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-2 text-xs font-mono rounded-sm border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 h-7 px-3"
+                  >
+                    <Share2 className="h-3.5 w-3.5" />
+                    Share
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md bg-zinc-950 border-zinc-800 text-zinc-100">
+                  <DialogHeader>
+                    <DialogTitle>Share your form</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex items-center space-x-2 mt-4">
+                    <Input 
+                      readOnly 
+                      value={`${typeof window !== 'undefined' ? window.location.origin : ''}/f/${formQuery.data?.slug || formId}`}
+                      className="bg-zinc-900 border-zinc-800 focus-visible:ring-emerald-500 font-mono text-xs" 
+                    />
+                    <Button 
+                      size="sm" 
+                      className="px-3 bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/f/${formQuery.data?.slug || formId}`);
+                        toast.success("Link copied to clipboard");
+                      }}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-col items-center justify-center mt-6 p-4 bg-white rounded-lg">
+                    <QRCode
+                      value={`${typeof window !== 'undefined' ? window.location.origin : ''}/f/${formQuery.data?.slug || formId}`}
+                      size={200}
+                    />
+                  </div>
+                  <div className="flex justify-center mt-4">
+                    <Button 
+                      variant="outline" 
+                      className="gap-2 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-100 bg-transparent text-zinc-300"
+                      onClick={() => toast.success("QR Code downloaded (stub)")}
+                    >
+                      <Download className="h-4 w-4" />
+                      Download QR
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
 
               <Button
                 size="sm"
@@ -384,51 +414,82 @@ export default function BuilderLayout({ formId }: { formId: string }) {
           </header>
 
           <div className="flex-1 flex flex-row min-h-0 overflow-hidden">
-            <aside className="w-80 flex-shrink-0 h-full border-r border-zinc-800 bg-zinc-900 flex flex-col overflow-hidden">
-              <Tabs value={activeActivity} onValueChange={(v) => {
-                setActiveActivity(v);
-                if (v === "settings") setSelectedId(null);
-              }} className="flex h-full flex-col">
-                <div className="px-4 py-3 border-b border-zinc-800 shrink-0">
-                  <TabsList className="w-full grid grid-cols-2 bg-zinc-950">
-                    <TabsTrigger value="components" className="text-[11px] font-mono data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100 text-zinc-500">Fields</TabsTrigger>
-                    <TabsTrigger value="settings" className="text-[11px] font-mono data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100 text-zinc-500">Settings</TabsTrigger>
-                  </TabsList>
-                </div>
-                <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-                  <TabsContent value="components" className="flex-1 overflow-y-auto m-0 p-0 flex flex-col">
-                    <PaletteSidebar />
-                  </TabsContent>
-                  <TabsContent value="settings" className="flex-1 overflow-y-auto m-0 p-0 flex flex-col">
-                    <GlobalSettingsPanel
-                      settings={globalSettings}
-                      onChange={(updates) => setGlobalSettings(prev => ({ ...prev, ...updates }))}
-                    />
-                  </TabsContent>
-                </div>
-              </Tabs>
+            {/* Activity Bar (Leftmost Panel) */}
+            <aside className="w-14 flex-shrink-0 h-full border-r border-zinc-800 bg-zinc-950 flex flex-col items-center py-4 gap-4 z-10">
+              <button
+                onClick={() => setActiveView('build')}
+                className={`p-2 rounded-lg transition-colors ${activeView === 'build' ? 'bg-zinc-800/50 text-emerald-400' : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'}`}
+                title="Build"
+              >
+                <PenTool className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setActiveView('settings')}
+                className={`p-2 rounded-lg transition-colors ${activeView === 'settings' ? 'bg-zinc-800/50 text-emerald-400' : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'}`}
+                title="Settings"
+              >
+                <Settings className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setActiveView('analytics')}
+                className={`p-2 rounded-lg transition-colors ${activeView === 'analytics' ? 'bg-zinc-800/50 text-emerald-400' : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'}`}
+                title="Analytics"
+              >
+                <BarChart className="h-5 w-5" />
+              </button>
             </aside>
 
-            <main className="flex-1 flex flex-col h-full min-w-0 bg-zinc-950 overflow-y-auto">
-              <div className="flex min-h-full p-8 flex-col items-center">
-                <div className="w-full max-w-3xl">
-                  <CanvasDropZone
-                    schema={schema}
-                    selectedId={selectedId}
-                    onSelect={setSelectedId}
-                    onRemove={removeField}
+            {/* Main Center Area Conditional Rendering */}
+            {activeView === 'build' && (
+              <>
+                <aside className="w-80 flex-shrink-0 h-full border-r border-zinc-800 bg-zinc-900 flex flex-col overflow-hidden">
+                  <div className="px-4 py-3 border-b border-zinc-800 shrink-0">
+                    <h3 className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest">Components</h3>
+                  </div>
+                  <div className="flex-1 overflow-y-auto m-0 p-0 flex flex-col">
+                    <PaletteSidebar />
+                  </div>
+                </aside>
+
+                <main className="flex-1 flex flex-col h-full min-w-0 bg-zinc-950 overflow-y-auto relative">
+                  <div className="flex min-h-full p-8 flex-col items-center">
+                    <div className="w-full max-w-3xl">
+                      <CanvasDropZone
+                        schema={schema}
+                        selectedId={selectedId}
+                        onSelect={setSelectedId}
+                        onRemove={removeField}
+                      />
+                    </div>
+                  </div>
+                </main>
+
+                {selectedField && (
+                  <aside className="w-80 shrink-0 border-l border-zinc-800 bg-zinc-900 flex flex-col overflow-hidden">
+                    <PropertiesPanel
+                      field={selectedField}
+                      onChange={(updates) => updateField(selectedField.id, updates)}
+                    />
+                  </aside>
+                )}
+              </>
+            )}
+
+            {activeView === 'settings' && (
+              <main className="flex-1 flex flex-col h-full min-w-0 bg-zinc-950 overflow-y-auto items-center">
+                <div className="w-full max-w-2xl my-12 bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden min-h-[500px]">
+                  <GlobalSettingsPanel
+                    settings={globalSettings}
+                    onChange={(updates) => setGlobalSettings(prev => ({ ...prev, ...updates }))}
                   />
                 </div>
-              </div>
-            </main>
+              </main>
+            )}
 
-            {selectedField && (
-              <aside className="w-80 shrink-0 border-l border-zinc-800 bg-zinc-900 flex flex-col overflow-hidden">
-                <PropertiesPanel
-                  field={selectedField}
-                  onChange={(updates) => updateField(selectedField.id, updates)}
-                />
-              </aside>
+            {activeView === 'analytics' && (
+              <main className="flex-1 flex flex-col h-full min-w-0 bg-zinc-950 overflow-y-auto">
+                <ResponsesAnalytics formId={formId} />
+              </main>
             )}
           </div>
         </div>
