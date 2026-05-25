@@ -65,6 +65,11 @@ export default function BuilderLayout({ formId }: { formId: string }) {
   });
 
   const initialLoadDone = useRef(false);
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
 
   const me = trpc.auth.me.useQuery(undefined, { retry: false });
   const formQuery = trpc.form.getFormById.useQuery(
@@ -368,14 +373,14 @@ export default function BuilderLayout({ formId }: { formId: string }) {
                   <div className="flex items-center space-x-2 mt-4">
                     <Input 
                       readOnly 
-                      value={`${typeof window !== 'undefined' ? window.location.origin : ''}/f/${formQuery.data?.slug || formId}`}
+                      value={origin ? `${origin}/f/${formQuery.data?.slug || formId}` : ""}
                       className="bg-zinc-900 border-zinc-800 focus-visible:ring-emerald-500 font-mono text-xs" 
                     />
                     <Button 
                       size="sm" 
                       className="px-3 bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                       onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.origin}/f/${formQuery.data?.slug || formId}`);
+                        navigator.clipboard.writeText(`${origin}/f/${formQuery.data?.slug || formId}`);
                         toast.success("Link copied to clipboard");
                       }}
                     >
@@ -384,7 +389,7 @@ export default function BuilderLayout({ formId }: { formId: string }) {
                   </div>
                   <div className="flex flex-col items-center justify-center mt-6 p-4 bg-white rounded-lg">
                     <QRCode
-                      value={`${typeof window !== 'undefined' ? window.location.origin : ''}/f/${formQuery.data?.slug || formId}`}
+                      value={origin ? `${origin}/f/${formQuery.data?.slug || formId}` : ""}
                       size={200}
                     />
                   </div>

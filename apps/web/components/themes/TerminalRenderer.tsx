@@ -59,23 +59,24 @@ export function TerminalRenderer({
     }
   }, [schema, isPreview]);
 
-  const hasBootSequenceStarted = useRef(false);
-
   useEffect(() => {
     if (isPreview || bootPhase !== "booting") return;
-    if (hasBootSequenceStarted.current) return;
     
-    hasBootSequenceStarted.current = true;
+    setLines([]);
 
     if (onTrackView) onTrackView();
 
+    let timer2: NodeJS.Timeout;
+    let timer3: NodeJS.Timeout;
+    let timer4: NodeJS.Timeout;
+
     const timer1 = setTimeout(() => {
       addLine(<p key="boot-1" className="text-zinc-500">{`> parcha connect origin fld_`}</p>);
-      const timer2 = setTimeout(() => {
+      timer2 = setTimeout(() => {
         addLine(<p key="boot-2" className="text-zinc-500">{`> Connection established.`}</p>);
-        const timer3 = setTimeout(() => {
+        timer3 = setTimeout(() => {
           addLine(<p key="boot-3" className="text-emerald-400 font-bold mt-2 text-lg">{`> Form: "${formName}"`}</p>);
-          const timer4 = setTimeout(() => {
+          timer4 = setTimeout(() => {
             addLine(
               <div key="instructions" className="text-zinc-500 mt-4 mb-6 text-sm bg-black/5 p-4 rounded-md border border-zinc-800">
                 <p className="font-bold mb-2">{`> INSTRUCTIONS:`}</p>
@@ -86,14 +87,16 @@ export function TerminalRenderer({
               </div>
             );
           }, 400);
-          return () => clearTimeout(timer4);
         }, 400);
-        return () => clearTimeout(timer3);
       }, 600);
-      return () => clearTimeout(timer2);
     }, 200);
 
-    return () => clearTimeout(timer1);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      clearTimeout(timer4);
+    };
   }, [bootPhase, isPreview, formName, onTrackView]);
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -120,7 +123,6 @@ export function TerminalRenderer({
       }
 
       if (bootPhase === "done" && isPreview) {
-        // Restart preview loop
         setCurrentIndex(0);
         setAnswers({});
         setBootPhase("live");

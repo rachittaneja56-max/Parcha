@@ -4,6 +4,7 @@ import { router, protectedProcedure, publicProcedure, verifiedProcedure } from "
 import { formService } from "../../services";
 import { CreateFormSchema, UpdateSchemaSchema, UpdateSettingsSchema, GetFormByIdSchema, GetPublicFormSchema } from "@repo/validators";
 import { generatePath } from "../../utils/path-generator";
+import { rateLimitMiddleware } from "../../middlewares/rateLimit";
 
 const TAGS = ["Forms"];
 const getPath = generatePath("/forms");
@@ -104,6 +105,7 @@ export const formRouter = router({
     }),
 
   getPublicForm: publicProcedure
+    .use(rateLimitMiddleware)
     .meta({
       openapi: {
         method: "GET",

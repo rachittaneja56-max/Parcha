@@ -19,6 +19,8 @@ class FormService {
       title,
       theme,
       slug,
+      status: "published",
+      visibility: "public",
       schema: [],
       updatedAt: new Date(),
     }).returning();
