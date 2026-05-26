@@ -204,8 +204,8 @@ export function TerminalRenderer({
                 </div>
               );
               setBootPhase("done");
-            } catch (err: any) {
-              addLine(<p key="error" className="text-rose-500 font-bold mt-4">{`> ERROR: ${err.message}`}</p>);
+            } catch (err: unknown) {
+              addLine(<p key="error" className="text-rose-500 font-bold mt-4">{`> ERROR: ${err instanceof Error ? err.message : "Unknown error"}`}</p>);
               setBootPhase("done");
             }
           } else {

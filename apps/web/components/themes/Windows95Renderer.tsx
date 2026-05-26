@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import type { ThemeRendererProps } from "./TerminalRenderer";
-import { Folder, FileText, HelpCircle, CheckSquare, List } from "lucide-react";
+import { Folder, FileText, CheckSquare, List } from "lucide-react";
 
 export function Windows95Renderer({
   schema,
@@ -16,8 +16,8 @@ export function Windows95Renderer({
   errorMsg: globalErrorMsg,
   onLoginClick,
   onPasswordSubmit,
-}: ThemeRendererProps & { form?: any }) {
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+}: ThemeRendererProps & { form?: { title?: string; description?: string } }) {
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -27,7 +27,7 @@ export function Windows95Renderer({
     }
   }, [isPreview, onTrackView]);
 
-  const handleAnswer = (fieldId: string, val: any) => {
+  const handleAnswer = (fieldId: string, val: string | string[]) => {
     setAnswers((prev) => ({ ...prev, [fieldId]: val }));
     if (errors[fieldId]) {
       setErrors((prev) => {
@@ -92,10 +92,10 @@ export function Windows95Renderer({
 
     if (onSubmit) {
       try {
-        await onSubmit(answers);
+        await onSubmit(answers as unknown as Record<string, string>);
         setIsSubmitted(true);
-      } catch (e: any) {
-        alert(e.message || "An error occurred");
+      } catch (e: unknown) {
+        alert(e instanceof Error ? e.message : "An error occurred");
       }
     }
   };

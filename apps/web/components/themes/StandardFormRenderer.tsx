@@ -15,8 +15,8 @@ export function StandardFormRenderer({
   errorMsg: globalErrorMsg,
   onLoginClick,
   onPasswordSubmit,
-}: ThemeRendererProps & { form?: any }) {
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+}: ThemeRendererProps & { form?: { title?: string; description?: string } }) {
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -26,7 +26,7 @@ export function StandardFormRenderer({
     }
   }, [isPreview, onTrackView]);
 
-  const handleAnswer = (fieldId: string, val: any) => {
+  const handleAnswer = (fieldId: string, val: string | string[]) => {
     setAnswers((prev) => ({ ...prev, [fieldId]: val }));
     if (errors[fieldId]) {
       setErrors((prev) => {
@@ -91,10 +91,10 @@ export function StandardFormRenderer({
 
     if (onSubmit) {
       try {
-        await onSubmit(answers);
+        await onSubmit(answers as unknown as Record<string, string>);
         setIsSubmitted(true);
-      } catch (e: any) {
-        alert(e.message || "An error occurred");
+      } catch (e: unknown) {
+        alert(e instanceof Error ? e.message : "An error occurred");
       }
     }
   };

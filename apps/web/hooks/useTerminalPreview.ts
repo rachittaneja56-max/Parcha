@@ -16,7 +16,7 @@ const PROMPTS: Record<string, string> = {
   multiple_choice: "Choose an option",
 };
 
-function fieldToPrompt(field: SchemaField, index: number): string {
+function fieldToPrompt(field: SchemaField): string {
   const base = PROMPTS[field.type] ?? "Enter a value";
   const prompt = field.label ? `> ${field.label}` : `> ${base}`;
   const required = field.required ? " *" : "";
@@ -38,7 +38,7 @@ export function useTerminalPreview(schema: SchemaField[]) {
     ];
 
     schema.forEach((field, i) => {
-      output.push({ text: fieldToPrompt(field, i), type: "prompt" });
+      output.push({ text: fieldToPrompt(field), type: "prompt" });
     });
 
     return output;
