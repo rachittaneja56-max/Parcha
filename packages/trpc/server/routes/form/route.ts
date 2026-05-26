@@ -126,4 +126,23 @@ export const formRouter = router({
       }
       return form;
     }),
+
+  getPublicForms: publicProcedure
+    .use(rateLimitMiddleware)
+    .meta({
+      openapi: {
+        method: "GET",
+        path: getPath("/public"),
+        protect: false,
+        tags: TAGS,
+        summary: "Get public published forms",
+        successDescription: "List of public published forms for the explore gallery",
+      },
+    })
+    .input(zodUndefinedModel)
+    .output(z.any())
+    .query(async () => {
+      return await formService.getPublicForms();
+    }),
 });
+

@@ -166,11 +166,49 @@ class FormService {
         : form.theme;
 
     return {
-      ...form,
       theme: mappedTheme as "terminal" | "windowsxp" | "standard" | "code_editor",
     };
   }
+
+  public async getPublicForms() {
+    const publicForms = await this.dbInstance
+      .select({
+        id: formsTable.id,
+        title: formsTable.title,
+        theme: formsTable.theme,
+        slug: formsTable.slug,
+        views: formsTable.views,
+        creator: {
+          fullName: sql`users.full_name`.as("fullName"),
+          profileImageUrl: sql`users.profile_image_url`.as("profileImageUrl"),
+        }
+      })
+      .from(formsTable)
+      .leftJoin(sql`users`, eq(formsTable.creatorId, sql`users.id`))
+      .where(
+        and(
+          eq(formsTable.visibility, "public"),
+          eq(formsTable.status, "published")
+        )
+      )
+      .orderBy(sql`${formsTable.updatedAt} DESC`);
+
+    return publicForms.map((form) => {
+      const mappedTheme = 
+        form.theme === "silicon_valley" || form.theme === "silicon_valley_3d"
+          ? "standard"
+          : (form.theme === "windows95" || form.theme === "windows_xp")
+          ? "windowsxp"
+          : form.theme;
+          
+      return {
+        ...form,
+        theme: mappedTheme as "terminal" | "windowsxp" | "standard" | "code_editor",
+      };
+    });
+  }
 }
+
 
 
 export default FormService;
