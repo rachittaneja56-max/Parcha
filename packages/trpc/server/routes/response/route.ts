@@ -24,12 +24,13 @@ export const responseRouter = router({
     })
     .input(SubmitResponseSchema)
     .output(z.any())
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       return await responseService.submitResponse(
         input.slug,
         input.payload,
         input.honeypotField,
-        input.fingerprint
+        input.fingerprint,
+        ctx.user?.id
       );
     }),
 

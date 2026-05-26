@@ -42,6 +42,32 @@ export function StandardFormRenderer({
       if (field.required && (!val || (typeof val === "string" && val.trim() === "") || (Array.isArray(val) && val.length === 0))) {
         newErrors[field.id] = "This is a required question";
         hasError = true;
+      } else if (val) {
+        if (field.type === "email" && typeof val === "string") {
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+            newErrors[field.id] = "Invalid email format";
+            hasError = true;
+          }
+        }
+        if (field.type === "date" && typeof val === "string") {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+            newErrors[field.id] = "Use YYYY-MM-DD format";
+            hasError = true;
+          }
+        }
+        if (field.type === "single_select" && typeof val === "string") {
+          if (!field.options?.includes(val)) {
+            newErrors[field.id] = "Please select a valid option";
+            hasError = true;
+          }
+        }
+        if (field.type === "multiple_choice" && Array.isArray(val)) {
+          const isValid = val.every(v => field.options?.includes(v));
+          if (!isValid) {
+            newErrors[field.id] = "Please select valid options";
+            hasError = true;
+          }
+        }
       }
     });
 

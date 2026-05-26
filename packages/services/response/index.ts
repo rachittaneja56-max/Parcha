@@ -35,7 +35,8 @@ class ResponseService {
     slug: string,
     payload: Record<string, any>,
     honeypotField?: string,
-    fingerprint?: string
+    fingerprint?: string,
+    userId?: string
   ) {
     const form = await this.dbInstance.query.formsTable.findFirst({
       where: eq(formsTable.slug, slug),
@@ -43,6 +44,10 @@ class ResponseService {
 
     if (!form || form.visibility === "unpublished") {
       throw new TRPCError({ code: "NOT_FOUND", message: "Form not found or unpublished" });
+    }
+
+    if (form.requireAuth && !userId) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Authentication required to submit this form" });
     }
 
     if (honeypotField && honeypotField.length > 0) {

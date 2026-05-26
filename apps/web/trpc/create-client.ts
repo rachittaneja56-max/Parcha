@@ -1,4 +1,4 @@
-import { httpLink, httpBatchStreamLink, splitLink, unstable_httpSubscriptionLink } from "@repo/trpc/client";
+import { httpLink, httpBatchStreamLink, splitLink, wsLink, createWSClient } from "@repo/trpc/client";
 import { env } from "~/env.js";
 
 interface CreateTRPCHttpBatchClientClientOpts {
@@ -37,10 +37,20 @@ export const createTRPCHttpBatchClientClient = (opts?: CreateTRPCHttpBatchClient
     return fetchLink;
   }
 
+  // Determine WebSocket URL dynamically based on current origin
+  let wsUrl = window.location.origin.replace(/^http/, "ws") + "/trpc";
+  if (env.NEXT_PUBLIC_API_URL) {
+    wsUrl = env.NEXT_PUBLIC_API_URL.replace(/^http/, "ws");
+  }
+
+  const wsClient = createWSClient({
+    url: wsUrl,
+  });
+
   return splitLink({
     condition: (op) => op.type === "subscription",
-    true: unstable_httpSubscriptionLink({
-      url,
+    true: wsLink({
+      client: wsClient,
     }),
     false: fetchLink,
   });
