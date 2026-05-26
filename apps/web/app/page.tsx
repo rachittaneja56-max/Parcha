@@ -14,10 +14,22 @@ import {
   Menu, 
   X, 
   ArrowRight,
-  Terminal as TerminalIcon
+  Terminal as TerminalIcon,
+  User,
+  LogOut,
+  LayoutDashboard
 } from "lucide-react";
 import { trpc } from "~/trpc/client";
 import { clearSessionCookie } from "~/app/actions/auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -101,20 +113,41 @@ function Navbar({ sessionData, sessionLoading, mobileMenuOpen, setMobileMenuOpen
           {sessionLoading ? (
             <div className="h-9 w-24 bg-zinc-900 border border-zinc-800 rounded-lg animate-pulse" />
           ) : isLoggedIn ? (
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard">
-                <button className="bg-emerald-500 text-black font-semibold rounded-lg px-4 py-2 text-sm hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all">
-                  Dashboard
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="relative h-9 w-9 rounded-full border border-zinc-800 hover:border-zinc-700 bg-zinc-950 flex items-center justify-center outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-zinc-900 text-emerald-400 text-xs font-mono font-bold">
+                      {sessionData.user.fullName?.charAt(0).toUpperCase() || <User className="h-4 w-4" />}
+                    </AvatarFallback>
+                  </Avatar>
                 </button>
-              </Link>
-              <button 
-                onClick={handleLogout} 
-                disabled={loggingOut}
-                className="text-sm text-zinc-400 hover:text-white font-medium transition-colors cursor-pointer disabled:opacity-50"
-              >
-                {loggingOut ? "Signing out..." : "Sign Out"}
-              </button>
-            </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 bg-zinc-950 border-zinc-800 text-zinc-100" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none text-white">{sessionData.user.fullName || "User"}</p>
+                    <p className="text-xs leading-none text-zinc-400 font-mono mt-0.5">{sessionData.user.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-zinc-800" />
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard" className="flex items-center w-full cursor-pointer focus:bg-emerald-500/10 focus:text-emerald-400">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Command Center</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-zinc-800" />
+                <DropdownMenuItem 
+                  onClick={handleLogout} 
+                  disabled={loggingOut}
+                  className="text-red-400 focus:text-red-400 focus:bg-red-950/30 cursor-pointer"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>{loggingOut ? "Signing out..." : "Sign Out"}</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <div className="flex items-center gap-6">
               <Link href="/auth/login" className="text-sm text-zinc-400 hover:text-white font-medium transition-colors">
@@ -170,22 +203,37 @@ function Navbar({ sessionData, sessionLoading, mobileMenuOpen, setMobileMenuOpen
           {sessionLoading ? (
             <div className="h-10 w-full bg-zinc-900 border border-zinc-800 rounded-lg animate-pulse" />
           ) : isLoggedIn ? (
-            <div className="flex flex-col gap-3">
-              <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                <button className="w-full bg-emerald-500 text-black font-semibold rounded-lg py-2.5 text-center text-sm">
-                  Dashboard
+            <div className="flex flex-col gap-4 border border-zinc-800/80 bg-zinc-900/30 rounded-xl p-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10 border border-zinc-800">
+                  <AvatarFallback className="bg-zinc-900 text-emerald-400 text-sm font-mono font-bold">
+                    {sessionData.user.fullName?.charAt(0).toUpperCase() || <User className="h-5 w-5" />}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-white">{sessionData.user.fullName || "User"}</span>
+                  <span className="text-xs text-zinc-500 font-mono">{sessionData.user.email}</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 mt-2">
+                <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                  <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-lg py-2.5 text-center text-sm flex items-center justify-center gap-2 transition-colors">
+                    <LayoutDashboard className="h-4 w-4" />
+                    Command Center
+                  </button>
+                </Link>
+                <button 
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogout();
+                  }} 
+                  disabled={loggingOut}
+                  className="w-full text-red-400 hover:text-red-300 font-medium py-2.5 text-center text-sm border border-zinc-800 hover:border-red-950/20 hover:bg-red-950/10 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  <LogOut className="h-4 w-4" />
+                  {loggingOut ? "Signing out..." : "Sign Out"}
                 </button>
-              </Link>
-              <button 
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  handleLogout();
-                }} 
-                disabled={loggingOut}
-                className="w-full text-zinc-400 hover:text-white py-2.5 text-center text-sm border border-zinc-800 hover:border-zinc-700 rounded-lg transition-colors cursor-pointer"
-              >
-                {loggingOut ? "Signing out..." : "Sign Out"}
-              </button>
+              </div>
             </div>
           ) : (
             <div className="flex flex-col gap-3">

@@ -11,6 +11,10 @@ export function StandardFormRenderer({
   isPreview = false,
   onTrackView,
   onSubmit,
+  appState = "live",
+  errorMsg: globalErrorMsg,
+  onLoginClick,
+  onPasswordSubmit,
 }: ThemeRendererProps & { form?: any }) {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -97,12 +101,69 @@ export function StandardFormRenderer({
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-slate-100 text-slate-800 font-sans py-12 px-4 flex justify-center">
-        <div className="max-w-2xl w-full">
-          <div className="bg-white rounded-lg shadow-sm border-t-8 border-t-purple-600 border border-slate-200 p-8 text-center">
-            <h2 className="text-3xl font-normal text-slate-800 mb-4">Thank you!</h2>
-            <p className="text-sm text-slate-600">{successMessage}</p>
+      <div className="min-h-screen bg-[#F0EBF8] text-slate-900 font-sans p-4 sm:p-8 flex items-center justify-center">
+        <div className="w-full max-w-2xl bg-white rounded-lg shadow-sm border border-slate-200 border-t-8 border-t-purple-600 p-8">
+          <h2 className="text-3xl font-medium mb-4">Response recorded</h2>
+          <p className="text-slate-600">{successMessage}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (appState === "error") {
+    return (
+      <div className="min-h-screen bg-[#F0EBF8] text-slate-900 font-sans p-4 sm:p-8 flex items-center justify-center">
+        <div className="w-full max-w-2xl bg-white rounded-lg shadow-sm border border-slate-200 border-t-8 border-t-red-500 p-8">
+          <h2 className="text-3xl font-medium mb-4 text-red-600">Error</h2>
+          <p className="text-slate-600 whitespace-pre-wrap">{globalErrorMsg || "An error occurred."}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (appState === "auth_prompt") {
+    return (
+      <div className="min-h-screen bg-[#F0EBF8] text-slate-900 font-sans p-4 sm:p-8 flex items-center justify-center">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-sm border border-slate-200 border-t-8 border-t-purple-600 p-8">
+          <h2 className="text-2xl font-medium mb-4">Authentication Required</h2>
+          <p className="text-slate-600 mb-6">You need to log in to access this form.</p>
+          <div className="flex flex-col gap-3">
+            <button onClick={onLoginClick} className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-2 rounded shadow transition-colors">
+              Log In to Continue
+            </button>
+            <button onClick={() => window.location.href = '/'} className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-6 py-2 rounded transition-colors">
+              Cancel
+            </button>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (appState === "password_prompt") {
+    return (
+      <div className="min-h-screen bg-[#F0EBF8] text-slate-900 font-sans p-4 sm:p-8 flex items-center justify-center">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-sm border border-slate-200 border-t-8 border-t-purple-600 p-8">
+          <h2 className="text-2xl font-medium mb-4">Password Required</h2>
+          <p className="text-slate-600 mb-6">This form requires a password to access.</p>
+          
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            const input = new FormData(e.currentTarget).get("pwd") as string;
+            if (onPasswordSubmit) onPasswordSubmit(input);
+          }}>
+            <input
+              type="password"
+              name="pwd"
+              placeholder="Enter password"
+              className="w-full bg-white border border-slate-300 rounded px-4 py-2 mb-4 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600"
+              autoFocus
+            />
+            {globalErrorMsg && <p className="text-red-500 text-sm mb-4">{globalErrorMsg}</p>}
+            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-2 rounded shadow transition-colors">
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     );

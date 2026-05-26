@@ -13,6 +13,10 @@ export interface ThemeRendererProps {
   isPreview?: boolean;
   onTrackView?: () => void;
   onSubmit?: (answers: Record<string, string>, honeypot?: string) => Promise<void>;
+  appState?: "live" | "error" | "auth_prompt" | "password_prompt";
+  errorMsg?: string;
+  onLoginClick?: () => void;
+  onPasswordSubmit?: (password: string) => void;
 }
 
 export function TerminalRenderer({
@@ -22,6 +26,10 @@ export function TerminalRenderer({
   isPreview = false,
   onTrackView,
   onSubmit,
+  appState = "live",
+  errorMsg: globalErrorMsg,
+  onLoginClick,
+  onPasswordSubmit,
 }: ThemeRendererProps) {
   const [bootPhase, setBootPhase] = useState<
     "booting" | "live" | "submitting" | "done"
@@ -270,6 +278,69 @@ export function TerminalRenderer({
       <div key="preview-success" className="bg-emerald-950/20 border border-emerald-800/30 rounded-lg text-emerald-400 pl-4 py-3 mt-4 select-none">
         <p className="font-bold">✓ Form completed successfully!</p>
         <p className="text-xs mt-1 font-normal font-mono text-zinc-500">Press Enter to restart the simulator session.</p>
+      </div>
+    );
+  }
+
+  if (appState === "error") {
+    return (
+      <div className="flex items-center justify-center min-h-screen w-screen overflow-hidden p-4 sm:p-8 bg-black font-mono text-slate-200">
+        <div className="flex flex-col w-full max-w-4xl h-full max-h-[85vh] bg-[#050B14] border border-[#0f1b2d] shadow-2xl rounded-md overflow-hidden">
+          <div className="p-6 sm:p-12 h-full overflow-y-auto">
+            <div className="text-rose-500 font-bold whitespace-pre-wrap mt-4">
+              {globalErrorMsg || "An error occurred."}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (appState === "auth_prompt") {
+    return (
+      <div className="flex items-center justify-center min-h-screen w-screen bg-black font-mono text-slate-200">
+        <div className="flex flex-col max-w-md w-full bg-[#050B14] border border-[#0f1b2d] shadow-2xl rounded-md p-8">
+          <h2 className="text-emerald-400 font-bold mb-4">{`> SECURITY ENFORCED`}</h2>
+          <p className="text-zinc-400 text-sm mb-6">User authentication is required to access this form.</p>
+          <p className="text-zinc-300 text-sm mb-6">Would you like to log in now?</p>
+          <div className="flex flex-col gap-3">
+            <button onClick={onLoginClick} className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold border border-emerald-500 py-2 transition-colors">
+              Log In to Continue
+            </button>
+            <button onClick={() => window.location.href = '/'} className="w-full bg-transparent hover:bg-emerald-900/40 text-emerald-500 border border-emerald-800/50 py-2 transition-colors">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (appState === "password_prompt") {
+    return (
+      <div className="flex items-center justify-center min-h-screen w-screen bg-black font-mono text-slate-200">
+        <div className="flex flex-col max-w-md w-full bg-[#050B14] border border-[#0f1b2d] shadow-2xl rounded-md p-8">
+          <h2 className="text-emerald-400 font-bold mb-4">{`> SECURITY PORTAL`}</h2>
+          <p className="text-zinc-400 text-sm mb-6">This form requires a password to access.</p>
+          
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            const input = new FormData(e.currentTarget).get("pwd") as string;
+            if (onPasswordSubmit) onPasswordSubmit(input);
+          }}>
+            <input
+              type="password"
+              name="pwd"
+              placeholder="Enter password"
+              className="w-full bg-black border border-[#0f1b2d] focus:border-emerald-500 text-emerald-400 outline-none px-4 py-2 mb-4"
+              autoFocus
+            />
+            {globalErrorMsg && <p className="text-rose-500 text-xs mb-4">{globalErrorMsg}</p>}
+            <button type="submit" className="w-full bg-emerald-900/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-800/50 py-2 transition-colors">
+              Submit
+            </button>
+          </form>
+        </div>
       </div>
     );
   }

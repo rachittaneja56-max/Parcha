@@ -52,11 +52,7 @@ export function RespondentTerminal({ formId }: { formId: string }) {
     }
 
     if (formConfig.requireAuth && !sessionData?.user) {
-      setErrorMsg(`> SECURITY OVERRIDE: Authentication required.\n> Redirecting to secure login portal...`);
-      setBootPhase("error");
-      setTimeout(() => {
-        router.push(`/auth/login?callbackUrl=/f/${formId}`);
-      }, 1500);
+      router.replace(`/auth/login?callbackUrl=/f/${formId}`);
       return;
     }
 
@@ -98,60 +94,23 @@ export function RespondentTerminal({ formId }: { formId: string }) {
     );
   }
 
-  if (bootPhase === "error") {
-    return (
-      <div className="flex items-center justify-center min-h-screen w-screen overflow-hidden p-4 sm:p-8 bg-black font-mono text-slate-200">
-        <div className="flex flex-col w-full max-w-4xl h-full max-h-[85vh] bg-[#050B14] border border-[#0f1b2d] shadow-2xl rounded-md overflow-hidden">
-          <div className="p-6 sm:p-12 h-full overflow-y-auto">
-            <div className="text-rose-500 font-bold whitespace-pre-wrap mt-4">
-              {errorMsg}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (bootPhase === "password_prompt") {
-    return (
-      <div className="flex items-center justify-center min-h-screen w-screen bg-black font-mono text-slate-200">
-        <div className="flex flex-col max-w-md w-full bg-[#050B14] border border-[#0f1b2d] shadow-2xl rounded-md p-8">
-          <h2 className="text-emerald-400 font-bold mb-4">{`> SECURITY PORTAL`}</h2>
-          <p className="text-zinc-400 text-sm mb-6">This form requires a password to access.</p>
-          
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            setActivePassword(passwordInput);
-          }}>
-            <input
-              type="password"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              placeholder="Enter password"
-              className="w-full bg-black border border-[#0f1b2d] focus:border-emerald-500 text-emerald-400 outline-none px-4 py-2 mb-4"
-              autoFocus
-            />
-            {errorMsg && <p className="text-rose-500 text-xs mb-4">{errorMsg}</p>}
-            <button type="submit" className="w-full bg-emerald-900/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-800/50 py-2 transition-colors">
-              Submit
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  if (!formConfig) return null;
+  const activeTheme = (formConfig?.theme as any) || "terminal";
+  const activeSchema = (formConfig?.schema as SchemaField[]) || [];
+  const activeFormName = formConfig?.title || "Parcha95 Form";
 
   return (
     <ThemeEngine
-      theme={(formConfig.theme as any) || "terminal"}
-      schema={formConfig.schema as SchemaField[]}
-      formName={formConfig.title || "Parcha95 Form"}
-      successMessage={formConfig.successMessage || undefined}
+      theme={activeTheme}
+      schema={activeSchema}
+      formName={activeFormName}
+      successMessage={formConfig?.successMessage || undefined}
       isPreview={false}
       onTrackView={handleTrackView}
       onSubmit={handleSubmit}
+      appState={bootPhase === "ready" ? "live" : bootPhase}
+      errorMsg={errorMsg}
+      onLoginClick={() => router.push(`/auth/login?callbackUrl=/f/${formId}`)}
+      onPasswordSubmit={(pwd) => setActivePassword(pwd)}
     />
   );
 }

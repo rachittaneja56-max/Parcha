@@ -11,6 +11,10 @@ export function CodeEditorRenderer({
   isPreview = false,
   onTrackView,
   onSubmit,
+  appState = "live",
+  errorMsg: globalErrorMsg,
+  onLoginClick,
+  onPasswordSubmit,
 }: ThemeRendererProps & { form?: any }) {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -125,8 +129,80 @@ export function CodeEditorRenderer({
     );
   }
 
+  if (appState === "error") {
+    return (
+      <div className="h-full flex flex-col items-center justify-center bg-[#1e1e1e] text-[#dcdcdc] font-mono p-8 text-center select-none min-h-[500px]">
+        <div className="bg-[#252526] border border-[#3c3c3c] p-8 rounded max-w-md w-full shadow-2xl space-y-4">
+          <div className="text-3xl mb-4 text-[#e06c75]">❌</div>
+          <h2 className="text-lg font-bold text-[#e06c75]">Exception Thrown</h2>
+          <p className="text-sm text-[#858585] leading-relaxed whitespace-pre-wrap">
+            {globalErrorMsg || "An error occurred during execution."}
+          </p>
+          <div className="pt-4 border-t border-[#3c3c3c] mt-4 flex justify-center">
+            <button onClick={() => window.location.href = '/'} className="px-6 py-2 bg-[#e06c75] hover:bg-[#c95d66] text-[#282c34] font-bold rounded text-xs transition-colors">
+              Return (0)
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (appState === "auth_prompt") {
+    return (
+      <div className="h-full flex flex-col items-center justify-center bg-[#1e1e1e] text-[#dcdcdc] font-mono p-8 text-center select-none min-h-[500px]">
+        <div className="bg-[#252526] border border-[#3c3c3c] p-8 rounded max-w-md w-full shadow-2xl space-y-4">
+          <div className="text-3xl mb-4 text-[#e5c07b]">⚠️</div>
+          <h2 className="text-lg font-bold text-[#e5c07b]">Authentication Exception</h2>
+          <p className="text-sm text-[#858585] leading-relaxed">
+            Unauthenticated user session detected. You must be logged in to access this workspace.
+          </p>
+          <div className="pt-4 border-t border-[#3c3c3c] mt-4 flex flex-col gap-3">
+            <button onClick={onLoginClick} className="w-full px-6 py-2 bg-[#61afef] hover:bg-[#528bff] text-[#282c34] font-bold rounded text-xs transition-colors">
+              Await Login()
+            </button>
+            <button onClick={() => window.location.href = '/'} className="w-full px-6 py-2 bg-transparent hover:bg-white/5 border border-[#3c3c3c] text-[#858585] font-bold rounded text-xs transition-colors">
+              Abort()
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (appState === "password_prompt") {
+    return (
+      <div className="h-full flex flex-col items-center justify-center bg-[#1e1e1e] text-[#dcdcdc] font-mono p-8 text-center select-none min-h-[500px]">
+        <div className="bg-[#252526] border border-[#3c3c3c] p-8 rounded max-w-md w-full shadow-2xl space-y-4">
+          <div className="text-3xl mb-4 text-[#c678dd]">🔑</div>
+          <h2 className="text-lg font-bold text-[#c678dd]">Workspace Encrypted</h2>
+          <p className="text-sm text-[#858585] leading-relaxed mb-4">
+            Enter the workspace password to decrypt and continue:
+          </p>
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            const input = new FormData(e.currentTarget).get("pwd") as string;
+            if (onPasswordSubmit) onPasswordSubmit(input);
+          }}>
+            <input
+              type="password"
+              name="pwd"
+              placeholder="Enter password..."
+              className="w-full bg-[#1e1e1e] border border-[#3c3c3c] rounded px-4 py-2 mb-4 text-[#dcdcdc] focus:outline-none focus:border-[#61afef]"
+              autoFocus
+            />
+            {globalErrorMsg && <p className="text-[#e06c75] text-xs font-bold mb-4">{globalErrorMsg}</p>}
+            <button type="submit" className="w-full px-6 py-2 bg-[#c678dd] hover:bg-[#b861d1] text-[#282c34] font-bold rounded text-xs transition-colors">
+              Decrypt()
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="h-full bg-[#1e1e1e] text-[#dcdcdc] font-mono flex flex-col select-none overflow-hidden min-h-[500px]">
+    <div className="h-full bg-[#1e1e1e] text-[#dcdcdc] font-mono flex flex-col select-none overflow-hidden min-h-screen sm:min-h-[500px]">
       
       <div className="bg-[#3c3c3c] h-[35px] shrink-0 border-b border-[#252526] flex items-center justify-between px-3 text-xs text-[#a3a3a3]">
         <div className="flex items-center gap-2">

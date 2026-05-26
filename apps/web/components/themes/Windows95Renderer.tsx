@@ -12,6 +12,10 @@ export function Windows95Renderer({
   isPreview = false,
   onTrackView,
   onSubmit,
+  appState = "live",
+  errorMsg: globalErrorMsg,
+  onLoginClick,
+  onPasswordSubmit,
 }: ThemeRendererProps & { form?: any }) {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -111,6 +115,114 @@ export function Windows95Renderer({
 
   const title = form?.title || formName || "Untitled Form";
   const description = form?.description || "";
+
+  if (appState === "error") {
+    return (
+      <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col items-center justify-center font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-y-auto">
+        <div className="w-full max-w-sm bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-2xl flex flex-col">
+          <div className="bg-[#000080] text-white font-bold px-2 py-1 flex justify-between items-center mb-2 select-none">
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <span className="text-xs">❌</span>
+              <span className="truncate">Error</span>
+            </div>
+            <button onClick={() => window.location.href = '/'} className="bg-[#c0c0c0] text-black border border-t-white border-l-white border-b-black border-r-black w-4 h-4 flex items-center justify-center font-bold text-[10px] active:border-t-black active:border-l-black active:border-b-white active:border-r-white cursor-pointer select-none focus:outline-none">
+              X
+            </button>
+          </div>
+          <div className="p-4 space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-xl select-none shrink-0">
+                X
+              </div>
+              <p className="text-sm text-slate-800 font-sans whitespace-pre-wrap leading-tight">{globalErrorMsg || "An error occurred."}</p>
+            </div>
+            <div className="flex justify-center pt-2">
+              <button onClick={() => window.location.href = '/'} className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none">
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (appState === "auth_prompt") {
+    return (
+      <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col items-center justify-center font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-y-auto">
+        <div className="w-full max-w-sm bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-2xl flex flex-col">
+          <div className="bg-[#000080] text-white font-bold px-2 py-1 flex justify-between items-center mb-2 select-none">
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <span className="text-xs">⚠️</span>
+              <span className="truncate">Security Warning</span>
+            </div>
+            <button onClick={() => window.location.href = '/'} className="bg-[#c0c0c0] text-black border border-t-white border-l-white border-b-black border-r-black w-4 h-4 flex items-center justify-center font-bold text-[10px] active:border-t-black active:border-l-black active:border-b-white active:border-r-white cursor-pointer select-none focus:outline-none">
+              X
+            </button>
+          </div>
+          <div className="p-4 space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-full bg-yellow-400 border border-slate-600 flex items-center justify-center text-black font-bold text-xl select-none shrink-0">
+                !
+              </div>
+              <p className="text-sm text-slate-800 font-sans leading-tight">You must be logged in to view this form. Would you like to log in now?</p>
+            </div>
+            <div className="flex justify-center gap-2 pt-2">
+              <button onClick={onLoginClick} className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none">
+                Log In
+              </button>
+              <button onClick={() => window.location.href = '/'} className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (appState === "password_prompt") {
+    return (
+      <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col items-center justify-center font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-y-auto">
+        <div className="w-full max-w-sm bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-2xl flex flex-col">
+          <div className="bg-[#000080] text-white font-bold px-2 py-1 flex justify-between items-center mb-2 select-none">
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <span className="text-xs">🔑</span>
+              <span className="truncate">Password Required</span>
+            </div>
+          </div>
+          <div className="p-4 space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-full bg-yellow-400 border border-slate-600 flex items-center justify-center text-black font-bold text-xl select-none shrink-0">
+                ?
+              </div>
+              <div className="w-full">
+                <p className="text-sm text-slate-800 font-sans leading-tight mb-2">Please enter the password to access this form:</p>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const input = new FormData(e.currentTarget).get("pwd") as string;
+                  if (onPasswordSubmit) onPasswordSubmit(input);
+                }}>
+                  <input
+                    type="password"
+                    name="pwd"
+                    className="w-full bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-1 outline-none font-['Tahoma',_'Verdana',_'sans-serif'] text-sm text-slate-900 focus:bg-white mb-2"
+                    autoFocus
+                  />
+                  {globalErrorMsg && <p className="text-red-700 text-xs font-bold mb-2">{globalErrorMsg}</p>}
+                  <div className="flex justify-center pt-2">
+                    <button type="submit" className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none">
+                      OK
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-y-auto">
