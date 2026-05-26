@@ -10,20 +10,20 @@ import { Spinner } from "~/components/ui/spinner";
 
 export function RespondentTerminal({ formId }: { formId: string }) {
   const router = useRouter();
-  
-  const [bootPhase, setBootPhase] = useState<"fetching" | "error" | "ready" | "password_prompt">("fetching");
+
+  const [bootPhase, setBootPhase] = useState<"fetching" | "error" | "ready" | "password_prompt" | "auth_prompt">("fetching");
   const [visitorId, setVisitorId] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [activePassword, setActivePassword] = useState<string | undefined>(undefined);
-  
+
   const { data: formConfig, error: formError, isLoading } = trpc.form.getPublicForm.useQuery(
     { formIdOrSlug: formId, password: activePassword },
     { retry: false }
   );
 
   const { data: sessionData, isLoading: sessionLoading } = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 0 });
-  
+
   const { mutate: submitResponse, mutateAsync: submitResponseAsync } = trpc.response.submit.useMutation();
   const { mutate: trackView } = trpc.response.trackView.useMutation();
 
@@ -52,7 +52,7 @@ export function RespondentTerminal({ formId }: { formId: string }) {
     }
 
     if (formConfig.requireAuth && !sessionData?.user) {
-      router.replace(`/auth/login?callbackUrl=/f/${formId}`);
+      setBootPhase("auth_prompt");
       return;
     }
 

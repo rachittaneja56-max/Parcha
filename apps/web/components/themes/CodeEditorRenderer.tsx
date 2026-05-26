@@ -131,17 +131,39 @@ export function CodeEditorRenderer({
 
   if (appState === "error") {
     return (
-      <div className="h-full flex flex-col items-center justify-center bg-[#1e1e1e] text-[#dcdcdc] font-mono p-8 text-center select-none min-h-[500px]">
-        <div className="bg-[#252526] border border-[#3c3c3c] p-8 rounded max-w-md w-full shadow-2xl space-y-4">
-          <div className="text-3xl mb-4 text-[#e06c75]">❌</div>
-          <h2 className="text-lg font-bold text-[#e06c75]">Exception Thrown</h2>
-          <p className="text-sm text-[#858585] leading-relaxed whitespace-pre-wrap">
-            {globalErrorMsg || "An error occurred during execution."}
-          </p>
-          <div className="pt-4 border-t border-[#3c3c3c] mt-4 flex justify-center">
-            <button onClick={() => window.location.href = '/'} className="px-6 py-2 bg-[#e06c75] hover:bg-[#c95d66] text-[#282c34] font-bold rounded text-xs transition-colors">
-              Return (0)
-            </button>
+      <div className="min-h-screen bg-[#1E1E1E] text-[#D4D4D4] font-['Consolas',_'Courier_New',_monospace] p-4 sm:p-8 flex items-center justify-center">
+        <div className="w-full max-w-3xl bg-[#252526] border border-[#454545] rounded-md overflow-hidden shadow-2xl flex flex-col">
+          <div className="bg-[#323233] px-3 py-2 flex items-center gap-2 border-b border-[#454545] text-xs">
+            <span className="text-[#E51400]">src</span>
+            <span className="text-[#858585]">&gt;</span>
+            <span className="text-[#E51400]">components</span>
+            <span className="text-[#858585]">&gt;</span>
+            <span className="text-[#cccccc]">ErrorBoundary.tsx</span>
+          </div>
+          <div className="p-6 flex flex-col">
+            <div className="flex gap-4">
+              <div className="flex flex-col text-right text-[#858585] text-sm select-none pr-4 border-r border-[#454545]">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+                <span>6</span>
+                <span>7</span>
+              </div>
+              <div className="text-sm font-mono whitespace-pre-wrap leading-relaxed">
+                <span className="text-[#569CD6]">throw new</span> <span className="text-[#4EC9B0]">Error</span><span className="text-[#cccccc]">(</span>
+                <br/>
+                <span className="text-[#CE9178] ml-4">{`"${globalErrorMsg || "An unexpected rendering error occurred."}"`}</span>
+                <br/>
+                <span className="text-[#cccccc]">);</span>
+                <br/>
+                <br/>
+                <span className="text-[#6A9955] italic">{'// The application state could not be recovered.'}</span>
+                <br/>
+                <span className="text-[#6A9955] italic">{'// Please check your configuration.'}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -150,20 +172,50 @@ export function CodeEditorRenderer({
 
   if (appState === "auth_prompt") {
     return (
-      <div className="h-full flex flex-col items-center justify-center bg-[#1e1e1e] text-[#dcdcdc] font-mono p-8 text-center select-none min-h-[500px]">
-        <div className="bg-[#252526] border border-[#3c3c3c] p-8 rounded max-w-md w-full shadow-2xl space-y-4">
-          <div className="text-3xl mb-4 text-[#e5c07b]">⚠️</div>
-          <h2 className="text-lg font-bold text-[#e5c07b]">Authentication Exception</h2>
-          <p className="text-sm text-[#858585] leading-relaxed">
-            Unauthenticated user session detected. You must be logged in to access this workspace.
-          </p>
-          <div className="pt-4 border-t border-[#3c3c3c] mt-4 flex flex-col gap-3">
-            <button onClick={onLoginClick} className="w-full px-6 py-2 bg-[#61afef] hover:bg-[#528bff] text-[#282c34] font-bold rounded text-xs transition-colors">
-              Await Login()
-            </button>
-            <button onClick={() => window.location.href = '/'} className="w-full px-6 py-2 bg-transparent hover:bg-white/5 border border-[#3c3c3c] text-[#858585] font-bold rounded text-xs transition-colors">
-              Abort()
-            </button>
+      <div className="min-h-screen bg-[#1E1E1E] text-[#D4D4D4] font-['Consolas',_'Courier_New',_monospace] p-4 sm:p-8 flex items-center justify-center">
+        <div className="w-full max-w-3xl bg-[#252526] border border-[#454545] rounded-md overflow-hidden shadow-2xl flex flex-col">
+          <div className="bg-[#323233] px-3 py-2 flex items-center gap-2 border-b border-[#454545] text-xs">
+            <span className="text-[#DCDCAA]">auth</span>
+            <span className="text-[#858585]">&gt;</span>
+            <span className="text-[#cccccc]">middleware.ts</span>
+          </div>
+          <div className="p-6 flex flex-col">
+            <div className="flex gap-4">
+              <div className="flex flex-col text-right text-[#858585] text-sm select-none pr-4 border-r border-[#454545]">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+                <span>6</span>
+                <span>7</span>
+                <span>8</span>
+                <span>9</span>
+              </div>
+              <div className="text-sm font-mono whitespace-pre-wrap leading-relaxed flex-1">
+                <span className="text-[#6A9955] italic">{'/**'}</span>
+                <br/>
+                <span className="text-[#6A9955] italic">{' * @route /f/' + formName.replace(/\s+/g, '-').toLowerCase()}</span>
+                <br/>
+                <span className="text-[#6A9955] italic">{' * @description This route is protected. Authentication is required.'}</span>
+                <br/>
+                <span className="text-[#6A9955] italic">{' */'}</span>
+                <br/>
+                <span className="text-[#569CD6]">if</span> <span className="text-[#cccccc]">(</span><span className="text-[#569CD6]">!</span><span className="text-[#9CDCFE]">session</span><span className="text-[#cccccc]">) {'{'}</span>
+                <br/>
+                <span className="ml-4 text-[#569CD6]">return</span> <span className="text-[#DCDCAA]">redirect</span><span className="text-[#cccccc]">(</span><span className="text-[#CE9178]">"/auth/login"</span><span className="text-[#cccccc]">);</span>
+                <br/>
+                <span className="text-[#cccccc]">{'}'}</span>
+                <div className="mt-8 flex gap-3">
+                  <button onClick={onLoginClick} className="bg-[#0E639C] hover:bg-[#1177BB] text-white px-4 py-1.5 rounded-sm text-sm transition-colors border border-transparent">
+                    Execute Login
+                  </button>
+                  <button onClick={() => window.location.href = '/'} className="bg-[#3C3C3C] hover:bg-[#4A4A4A] text-[#CCCCCC] px-4 py-1.5 rounded-sm text-sm transition-colors border border-[#454545]">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -172,30 +224,58 @@ export function CodeEditorRenderer({
 
   if (appState === "password_prompt") {
     return (
-      <div className="h-full flex flex-col items-center justify-center bg-[#1e1e1e] text-[#dcdcdc] font-mono p-8 text-center select-none min-h-[500px]">
-        <div className="bg-[#252526] border border-[#3c3c3c] p-8 rounded max-w-md w-full shadow-2xl space-y-4">
-          <div className="text-3xl mb-4 text-[#c678dd]">🔑</div>
-          <h2 className="text-lg font-bold text-[#c678dd]">Workspace Encrypted</h2>
-          <p className="text-sm text-[#858585] leading-relaxed mb-4">
-            Enter the workspace password to decrypt and continue:
-          </p>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            const input = new FormData(e.currentTarget).get("pwd") as string;
-            if (onPasswordSubmit) onPasswordSubmit(input);
-          }}>
-            <input
-              type="password"
-              name="pwd"
-              placeholder="Enter password..."
-              className="w-full bg-[#1e1e1e] border border-[#3c3c3c] rounded px-4 py-2 mb-4 text-[#dcdcdc] focus:outline-none focus:border-[#61afef]"
-              autoFocus
-            />
-            {globalErrorMsg && <p className="text-[#e06c75] text-xs font-bold mb-4">{globalErrorMsg}</p>}
-            <button type="submit" className="w-full px-6 py-2 bg-[#c678dd] hover:bg-[#b861d1] text-[#282c34] font-bold rounded text-xs transition-colors">
-              Decrypt()
-            </button>
-          </form>
+      <div className="min-h-screen bg-[#1E1E1E] text-[#D4D4D4] font-['Consolas',_'Courier_New',_monospace] p-4 sm:p-8 flex items-center justify-center">
+        <div className="w-full max-w-3xl bg-[#252526] border border-[#454545] rounded-md overflow-hidden shadow-2xl flex flex-col">
+          <div className="bg-[#323233] px-3 py-2 flex items-center gap-2 border-b border-[#454545] text-xs">
+            <span className="text-[#CE9178]">security</span>
+            <span className="text-[#858585]">&gt;</span>
+            <span className="text-[#cccccc]">decrypt.ts</span>
+          </div>
+          <div className="p-6 flex flex-col">
+            <div className="flex gap-4">
+              <div className="flex flex-col text-right text-[#858585] text-sm select-none pr-4 border-r border-[#454545]">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+                <span>6</span>
+                <span>7</span>
+                <span>8</span>
+              </div>
+              <div className="text-sm font-mono whitespace-pre-wrap leading-relaxed w-full">
+                <span className="text-[#6A9955] italic">{'// Form payload is encrypted.'}</span>
+                <br/>
+                <span className="text-[#569CD6]">const</span> <span className="text-[#9CDCFE]">password</span> <span className="text-[#D4D4D4]">=</span> <span className="text-[#DCDCAA]">await</span> <span className="text-[#4EC9B0]">Prompt</span><span className="text-[#cccccc]">.</span><span className="text-[#DCDCAA]">ask</span><span className="text-[#cccccc]">(</span><span className="text-[#CE9178]">"Enter password:"</span><span className="text-[#cccccc]">);</span>
+                <br/>
+                <br/>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const input = new FormData(e.currentTarget).get("pwd") as string;
+                  if (onPasswordSubmit) onPasswordSubmit(input);
+                }} className="flex flex-col mt-2">
+                  <div className="flex items-center">
+                    <span className="text-[#CE9178]">"</span>
+                    <input
+                      type="password"
+                      name="pwd"
+                      className="bg-transparent border-none outline-none text-[#CE9178] px-0 py-0 flex-1 min-w-[200px]"
+                      autoFocus
+                    />
+                    <span className="text-[#CE9178]">"</span><span className="animate-pulse text-[#D4D4D4]">_</span>
+                  </div>
+                  {globalErrorMsg && (
+                    <div className="mt-2 text-[#F14C4C]">
+                      <span className="text-[#F14C4C]">Error</span>: {globalErrorMsg}
+                    </div>
+                  )}
+                  <button type="submit" className="mt-6 self-start bg-[#0E639C] hover:bg-[#1177BB] text-white px-4 py-1.5 rounded-sm text-sm transition-colors border border-transparent">
+                    Run Decryption
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

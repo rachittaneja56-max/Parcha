@@ -284,12 +284,15 @@ export function TerminalRenderer({
 
   if (appState === "error") {
     return (
-      <div className="flex items-center justify-center min-h-screen w-screen overflow-hidden p-4 sm:p-8 bg-black font-mono text-slate-200">
-        <div className="flex flex-col w-full max-w-4xl h-full max-h-[85vh] bg-[#050B14] border border-[#0f1b2d] shadow-2xl rounded-md overflow-hidden">
-          <div className="p-6 sm:p-12 h-full overflow-y-auto">
-            <div className="text-rose-500 font-bold whitespace-pre-wrap mt-4">
-              {globalErrorMsg || "An error occurred."}
-            </div>
+      <div className="relative flex items-center justify-center min-h-screen w-screen overflow-hidden p-4 sm:p-8 bg-black font-mono text-slate-200">
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-50 opacity-20" />
+        <div className="flex flex-col max-w-lg w-full bg-[#0a0a0a] border border-rose-500/50 shadow-[0_0_15px_rgba(225,29,72,0.3)] rounded-md p-8 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-rose-500 animate-pulse" />
+          <h2 className="text-rose-500 font-bold mb-4 flex items-center gap-2">
+            <span className="animate-pulse">_</span> FATAL EXCEPTION
+          </h2>
+          <div className="text-rose-400/80 text-sm whitespace-pre-wrap mt-4 bg-rose-950/20 p-4 rounded border border-rose-900/30">
+            {globalErrorMsg || "An error occurred."}
           </div>
         </div>
       </div>
@@ -298,17 +301,22 @@ export function TerminalRenderer({
 
   if (appState === "auth_prompt") {
     return (
-      <div className="flex items-center justify-center min-h-screen w-screen bg-black font-mono text-slate-200">
-        <div className="flex flex-col max-w-md w-full bg-[#050B14] border border-[#0f1b2d] shadow-2xl rounded-md p-8">
-          <h2 className="text-emerald-400 font-bold mb-4">{`> SECURITY ENFORCED`}</h2>
-          <p className="text-zinc-400 text-sm mb-6">User authentication is required to access this form.</p>
-          <p className="text-zinc-300 text-sm mb-6">Would you like to log in now?</p>
+      <div className="relative flex items-center justify-center min-h-screen w-screen bg-black font-mono text-slate-200">
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-50 opacity-20" />
+        <div className="flex flex-col max-w-md w-full bg-[#050B14] border border-emerald-900/50 shadow-[0_0_20px_rgba(16,185,129,0.15)] rounded-md p-8 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500 animate-pulse" />
+          <h2 className="text-emerald-400 font-bold mb-4 flex items-center gap-2">
+            <span className="animate-pulse">_</span> SECURITY ENFORCED
+          </h2>
+          <p className="text-emerald-400/70 text-sm mb-6 bg-emerald-950/30 p-3 border border-emerald-900/40 rounded">
+            User authentication is required to access this node.
+          </p>
           <div className="flex flex-col gap-3">
-            <button onClick={onLoginClick} className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold border border-emerald-500 py-2 transition-colors">
-              Log In to Continue
+            <button onClick={onLoginClick} className="w-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/50 hover:border-emerald-400 py-2.5 transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+              INITIATE LOGIN SEQUENCE
             </button>
-            <button onClick={() => window.location.href = '/'} className="w-full bg-transparent hover:bg-emerald-900/40 text-emerald-500 border border-emerald-800/50 py-2 transition-colors">
-              Cancel
+            <button onClick={() => window.location.href = '/'} className="w-full bg-transparent hover:bg-red-950/40 text-red-400/80 hover:text-red-400 border border-red-900/30 hover:border-red-500/50 py-2.5 transition-all">
+              ABORT
             </button>
           </div>
         </div>
@@ -318,10 +326,16 @@ export function TerminalRenderer({
 
   if (appState === "password_prompt") {
     return (
-      <div className="flex items-center justify-center min-h-screen w-screen bg-black font-mono text-slate-200">
-        <div className="flex flex-col max-w-md w-full bg-[#050B14] border border-[#0f1b2d] shadow-2xl rounded-md p-8">
-          <h2 className="text-emerald-400 font-bold mb-4">{`> SECURITY PORTAL`}</h2>
-          <p className="text-zinc-400 text-sm mb-6">This form requires a password to access.</p>
+      <div className="relative flex items-center justify-center min-h-screen w-screen bg-black font-mono text-slate-200">
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-50 opacity-20" />
+        <div className="flex flex-col max-w-md w-full bg-[#050B14] border border-emerald-900/50 shadow-[0_0_20px_rgba(16,185,129,0.15)] rounded-md p-8 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500 animate-pulse" />
+          <h2 className="text-emerald-400 font-bold mb-4 flex items-center gap-2">
+            <span className="animate-pulse">_</span> SECURE TERMINAL
+          </h2>
+          <p className="text-emerald-400/70 text-sm mb-6 bg-emerald-950/30 p-3 border border-emerald-900/40 rounded">
+            Enter password to decrypt form data:
+          </p>
           
           <form onSubmit={(e) => {
             e.preventDefault();
@@ -331,13 +345,13 @@ export function TerminalRenderer({
             <input
               type="password"
               name="pwd"
-              placeholder="Enter password"
-              className="w-full bg-black border border-[#0f1b2d] focus:border-emerald-500 text-emerald-400 outline-none px-4 py-2 mb-4"
+              placeholder="PASSWORD"
+              className="w-full bg-black/50 border border-emerald-900/50 focus:border-emerald-500 text-emerald-400 outline-none px-4 py-3 mb-4 placeholder:text-emerald-900 tracking-widest transition-colors"
               autoFocus
             />
-            {globalErrorMsg && <p className="text-rose-500 text-xs mb-4">{globalErrorMsg}</p>}
-            <button type="submit" className="w-full bg-emerald-900/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-800/50 py-2 transition-colors">
-              Submit
+            {globalErrorMsg && <p className="text-rose-500 text-xs mb-4 bg-rose-950/20 p-2 border border-rose-900/30 rounded">{globalErrorMsg}</p>}
+            <button type="submit" className="w-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/50 hover:border-emerald-400 py-2.5 transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+              DECRYPT
             </button>
           </form>
         </div>

@@ -118,12 +118,12 @@ export function Windows95Renderer({
 
   if (appState === "error") {
     return (
-      <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col items-center justify-center font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-y-auto">
-        <div className="w-full max-w-sm bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-2xl flex flex-col">
+      <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col items-center justify-center font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-hidden relative">
+        <div className="w-full max-w-sm bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] flex flex-col relative z-10">
           <div className="bg-[#000080] text-white font-bold px-2 py-1 flex justify-between items-center mb-2 select-none">
             <div className="flex items-center gap-1.5 text-xs sm:text-sm">
               <span className="text-xs">❌</span>
-              <span className="truncate">Error</span>
+              <span className="truncate">Application Error</span>
             </div>
             <button onClick={() => window.location.href = '/'} className="bg-[#c0c0c0] text-black border border-t-white border-l-white border-b-black border-r-black w-4 h-4 flex items-center justify-center font-bold text-[10px] active:border-t-black active:border-l-black active:border-b-white active:border-r-white cursor-pointer select-none focus:outline-none">
               X
@@ -131,16 +131,26 @@ export function Windows95Renderer({
           </div>
           <div className="p-4 space-y-4">
             <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-xl select-none shrink-0">
+              <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-xl select-none shrink-0 shadow-sm border border-slate-700">
                 X
               </div>
-              <p className="text-sm text-slate-800 font-sans whitespace-pre-wrap leading-tight">{globalErrorMsg || "An error occurred."}</p>
+              <p className="text-sm text-slate-800 font-sans whitespace-pre-wrap leading-tight mt-1">{globalErrorMsg || "A fatal exception has occurred in FormRenderer.vxd."}</p>
             </div>
-            <div className="flex justify-center pt-2">
-              <button onClick={() => window.location.href = '/'} className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none">
+            <div className="flex justify-center pt-4">
+              <button onClick={() => window.location.href = '/'} className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-8 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none outline-none focus-visible:ring-1 focus-visible:ring-black border-dotted focus-visible:border-black">
                 OK
               </button>
             </div>
+          </div>
+        </div>
+        {/* Fake Taskbar */}
+        <div className="absolute bottom-0 left-0 w-full h-8 bg-[#c0c0c0] border-t-2 border-t-white flex items-center px-1 z-50">
+          <button className="flex items-center gap-1 bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-2 py-0.5 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-default">
+            <span className="text-blue-700 italic font-serif">P</span> Start
+          </button>
+          <div className="ml-2 border-l border-slate-500 border-r border-white h-5"></div>
+          <div className="ml-2 flex items-center gap-1 bg-[#c0c0c0] border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white px-2 py-0.5 font-bold text-xs">
+            <span className="text-xs">❌</span> Error
           </div>
         </div>
       </div>
@@ -149,8 +159,8 @@ export function Windows95Renderer({
 
   if (appState === "auth_prompt") {
     return (
-      <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col items-center justify-center font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-y-auto">
-        <div className="w-full max-w-sm bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-2xl flex flex-col">
+      <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col items-center justify-center font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-hidden relative">
+        <div className="w-full max-w-sm bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] flex flex-col relative z-10">
           <div className="bg-[#000080] text-white font-bold px-2 py-1 flex justify-between items-center mb-2 select-none">
             <div className="flex items-center gap-1.5 text-xs sm:text-sm">
               <span className="text-xs">⚠️</span>
@@ -162,13 +172,13 @@ export function Windows95Renderer({
           </div>
           <div className="p-4 space-y-4">
             <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-yellow-400 border border-slate-600 flex items-center justify-center text-black font-bold text-xl select-none shrink-0">
+              <div className="w-8 h-8 bg-yellow-400 border border-slate-700 shadow-sm flex items-center justify-center text-black font-bold text-xl select-none shrink-0" style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)" }}>
                 !
               </div>
-              <p className="text-sm text-slate-800 font-sans leading-tight">You must be logged in to view this form. Would you like to log in now?</p>
+              <p className="text-sm text-slate-800 font-sans leading-tight mt-1">You must be logged in to view this form. Would you like to log in now?</p>
             </div>
-            <div className="flex justify-center gap-2 pt-2">
-              <button onClick={onLoginClick} className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none">
+            <div className="flex justify-center gap-2 pt-4">
+              <button onClick={onLoginClick} className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none outline-none focus-visible:ring-1 focus-visible:ring-black border-dotted focus-visible:border-black">
                 Log In
               </button>
               <button onClick={() => window.location.href = '/'} className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none">
@@ -177,27 +187,40 @@ export function Windows95Renderer({
             </div>
           </div>
         </div>
+        {/* Fake Taskbar */}
+        <div className="absolute bottom-0 left-0 w-full h-8 bg-[#c0c0c0] border-t-2 border-t-white flex items-center px-1 z-50">
+          <button className="flex items-center gap-1 bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-2 py-0.5 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-default">
+            <span className="text-blue-700 italic font-serif">P</span> Start
+          </button>
+          <div className="ml-2 border-l border-slate-500 border-r border-white h-5"></div>
+          <div className="ml-2 flex items-center gap-1 bg-[#c0c0c0] border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white px-2 py-0.5 font-bold text-xs">
+            <span className="text-xs">⚠️</span> Warning
+          </div>
+        </div>
       </div>
     );
   }
 
   if (appState === "password_prompt") {
     return (
-      <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col items-center justify-center font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-y-auto">
-        <div className="w-full max-w-sm bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-2xl flex flex-col">
+      <div className="min-h-screen bg-teal-800 p-4 sm:p-10 flex flex-col items-center justify-center font-['Tahoma',_'Verdana',_'sans-serif'] select-none overflow-hidden relative">
+        <div className="w-full max-w-sm bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-slate-700 border-r-slate-700 p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] flex flex-col relative z-10">
           <div className="bg-[#000080] text-white font-bold px-2 py-1 flex justify-between items-center mb-2 select-none">
             <div className="flex items-center gap-1.5 text-xs sm:text-sm">
               <span className="text-xs">🔑</span>
-              <span className="truncate">Password Required</span>
+              <span className="truncate">Enter Password</span>
             </div>
+            <button onClick={() => window.location.href = '/'} className="bg-[#c0c0c0] text-black border border-t-white border-l-white border-b-black border-r-black w-4 h-4 flex items-center justify-center font-bold text-[10px] active:border-t-black active:border-l-black active:border-b-white active:border-r-white cursor-pointer select-none focus:outline-none">
+              X
+            </button>
           </div>
           <div className="p-4 space-y-4">
             <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-yellow-400 border border-slate-600 flex items-center justify-center text-black font-bold text-xl select-none shrink-0">
-                ?
+              <div className="w-8 h-8 rounded bg-[#c0c0c0] border border-slate-500 shadow-sm flex items-center justify-center text-slate-800 font-bold text-lg select-none shrink-0">
+                🔑
               </div>
               <div className="w-full">
-                <p className="text-sm text-slate-800 font-sans leading-tight mb-2">Please enter the password to access this form:</p>
+                <p className="text-sm text-slate-800 font-sans leading-tight mb-3">Please enter the password to access this form:</p>
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   const input = new FormData(e.currentTarget).get("pwd") as string;
@@ -206,18 +229,28 @@ export function Windows95Renderer({
                   <input
                     type="password"
                     name="pwd"
-                    className="w-full bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-1 outline-none font-['Tahoma',_'Verdana',_'sans-serif'] text-sm text-slate-900 focus:bg-white mb-2"
+                    className="w-full bg-white border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white p-1 outline-none font-['Tahoma',_'Verdana',_'sans-serif'] text-sm text-slate-900 focus:bg-white mb-2 shadow-sm"
                     autoFocus
                   />
                   {globalErrorMsg && <p className="text-red-700 text-xs font-bold mb-2">{globalErrorMsg}</p>}
-                  <div className="flex justify-center pt-2">
-                    <button type="submit" className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none">
+                  <div className="flex justify-end pt-4">
+                    <button type="submit" className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-6 py-1 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-pointer focus:outline-none outline-none focus-visible:ring-1 focus-visible:ring-black border-dotted focus-visible:border-black">
                       OK
                     </button>
                   </div>
                 </form>
               </div>
             </div>
+          </div>
+        </div>
+        {/* Fake Taskbar */}
+        <div className="absolute bottom-0 left-0 w-full h-8 bg-[#c0c0c0] border-t-2 border-t-white flex items-center px-1 z-50">
+          <button className="flex items-center gap-1 bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-slate-700 border-r-slate-700 px-2 py-0.5 font-bold text-xs active:border-t-slate-700 active:border-l-slate-700 active:border-b-white active:border-r-white cursor-default">
+            <span className="text-blue-700 italic font-serif">P</span> Start
+          </button>
+          <div className="ml-2 border-l border-slate-500 border-r border-white h-5"></div>
+          <div className="ml-2 flex items-center gap-1 bg-[#c0c0c0] border-2 border-t-slate-700 border-l-slate-700 border-b-white border-r-white px-2 py-0.5 font-bold text-xs">
+            <span className="text-xs">🔑</span> Security
           </div>
         </div>
       </div>
