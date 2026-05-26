@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-export const CreateFormSchema = z.object({
-  title: z.string(),
-  theme: z.enum(["terminal", "windowsxp", "standard", "code_editor"]).default("terminal"),
-  schema: z.array(FieldSchema).optional(),
-});
-export type CreateFormInput = z.infer<typeof CreateFormSchema>;
-
 export const FieldSchema = z.object({
   id: z.string().startsWith("fld_"),
   type: z.string(),
@@ -19,6 +12,13 @@ export const FieldSchema = z.object({
   description: z.string().optional(),
 });
 export type FieldSchemaType = z.infer<typeof FieldSchema>;
+
+export const CreateFormSchema = z.object({
+  title: z.string(),
+  theme: z.enum(["terminal", "windowsxp", "standard", "code_editor"]).default("terminal"),
+  schema: z.array(FieldSchema).optional(),
+});
+export type CreateFormInput = z.infer<typeof CreateFormSchema>;
 
 export const UpdateSchemaSchema = z.object({
   formId: z.string().uuid(),
