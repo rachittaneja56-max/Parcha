@@ -62,14 +62,19 @@ function Navbar({ sessionData, sessionLoading, mobileMenuOpen, setMobileMenuOpen
   const utils = trpc.useUtils();
   const isLoggedIn = !!sessionData?.user;
 
-  // Logout mutation
-  const logout = trpc.auth.logout.useMutation({
-    onSuccess: async () => {
+  // Logout handler
+  const [loggingOut, setLoggingOut] = useState(false);
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
       await utils.auth.me.invalidate();
       router.replace("/");
       router.refresh();
+    } catch {
+      setLoggingOut(false);
     }
-  });
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-800/50 bg-[#050505]/80 backdrop-blur-md">
@@ -101,11 +106,11 @@ function Navbar({ sessionData, sessionLoading, mobileMenuOpen, setMobileMenuOpen
                 </button>
               </Link>
               <button 
-                onClick={() => logout.mutate()} 
-                disabled={logout.isPending}
+                onClick={handleLogout} 
+                disabled={loggingOut}
                 className="text-sm text-zinc-400 hover:text-white font-medium transition-colors cursor-pointer disabled:opacity-50"
               >
-                {logout.isPending ? "Signing out..." : "Sign Out"}
+                {loggingOut ? "Signing out..." : "Sign Out"}
               </button>
             </div>
           ) : (
@@ -172,12 +177,12 @@ function Navbar({ sessionData, sessionLoading, mobileMenuOpen, setMobileMenuOpen
               <button 
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  logout.mutate();
+                  handleLogout();
                 }} 
-                disabled={logout.isPending}
+                disabled={loggingOut}
                 className="w-full text-zinc-400 hover:text-white py-2.5 text-center text-sm border border-zinc-800 hover:border-zinc-700 rounded-lg transition-colors cursor-pointer"
               >
-                {logout.isPending ? "Signing out..." : "Sign Out"}
+                {loggingOut ? "Signing out..." : "Sign Out"}
               </button>
             </div>
           ) : (

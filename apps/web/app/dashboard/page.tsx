@@ -103,13 +103,18 @@ export default function DashboardPage() {
     enabled: !!me.data?.user,
   });
 
-  const logout = trpc.auth.logout.useMutation({
-    onSuccess: async () => {
+  const [loggingOut, setLoggingOut] = useState(false);
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
       await utils.auth.me.invalidate();
       router.replace("/");
       router.refresh();
+    } catch {
+      setLoggingOut(false);
     }
-  });
+  };
 
   useEffect(() => {
     if (!me.isLoading && (me.isError || !me.data?.user)) {
@@ -153,11 +158,11 @@ export default function DashboardPage() {
             <span className="text-zinc-100">Command Center</span>
           </div>
           <button 
-            onClick={() => logout.mutate()} 
-            disabled={logout.isPending}
+            onClick={handleLogout} 
+            disabled={loggingOut}
             className="text-xs font-mono text-zinc-400 hover:text-white transition-colors disabled:opacity-50"
           >
-            {logout.isPending ? "Signing out..." : "Sign Out"}
+            {loggingOut ? "Signing out..." : "Sign Out"}
           </button>
         </nav>
 
