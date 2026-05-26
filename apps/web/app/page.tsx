@@ -295,13 +295,26 @@ function Hero({ sessionData }: { sessionData: any }) {
   useEffect(() => {
     setHandle("");
     const defaultText = "rachit";
+    
     let index = 0;
+    let isActive = true;
     let interval: NodeJS.Timeout;
 
     const timer = setTimeout(() => {
+      if (!isActive) return;
       interval = setInterval(() => {
+        if (!isActive) {
+          clearInterval(interval);
+          return;
+        }
         if (index < defaultText.length) {
-          setHandle((prev) => prev + defaultText.charAt(index));
+          setHandle((prev) => {
+            // Ensure we strictly type 'rachit' from scratch
+            if (prev === defaultText.substring(0, index)) {
+              return prev + defaultText.charAt(index);
+            }
+            return prev;
+          });
           index++;
         } else {
           clearInterval(interval);
@@ -310,10 +323,11 @@ function Hero({ sessionData }: { sessionData: any }) {
     }, 800);
 
     return () => {
+      isActive = false;
       clearTimeout(timer);
       if (interval) clearInterval(interval);
     };
-  }, [activeTheme]); // re-run or type when theme is swapped to make it feel alive
+  }, [activeTheme]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
