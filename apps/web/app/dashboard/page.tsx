@@ -18,6 +18,7 @@ import { Input } from "~/components/ui/input";
 import { Spinner } from "~/components/ui/spinner";
 import { trpc } from "~/trpc/client";
 import { toast } from "sonner";
+import { clearSessionCookie } from "~/app/actions/auth";
 
 function CreateFormDialog({
   open,
@@ -106,7 +107,6 @@ export default function DashboardPage() {
   const [loggingOut, setLoggingOut] = useState(false);
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: async () => {
-      const { clearSessionCookie } = await import("~/app/actions/auth");
       await clearSessionCookie();
       await utils.auth.me.invalidate();
       router.replace("/");

@@ -17,6 +17,7 @@ import {
   Terminal as TerminalIcon
 } from "lucide-react";
 import { trpc } from "~/trpc/client";
+import { clearSessionCookie } from "~/app/actions/auth";
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -67,7 +68,6 @@ function Navbar({ sessionData, sessionLoading, mobileMenuOpen, setMobileMenuOpen
   // Logout mutation
   const logout = trpc.auth.logout.useMutation({
     onSuccess: async () => {
-      const { clearSessionCookie } = await import("~/app/actions/auth");
       await clearSessionCookie();
       await utils.auth.me.invalidate();
       router.replace("/");

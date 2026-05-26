@@ -102,7 +102,7 @@ class AuthService {
   }
 
   public createTokens(userId: string) {
-    const accessToken = jwt.sign({ userId, type: "access" }, env.JWT_SECRET, { expiresIn: "15m" });
+    const accessToken = jwt.sign({ userId, type: "access" }, env.JWT_SECRET, { expiresIn: "7d" });
     const refreshToken = jwt.sign({ userId, type: "refresh" }, env.JWT_SECRET, { expiresIn: "7d" });
     return { accessToken, refreshToken };
   }

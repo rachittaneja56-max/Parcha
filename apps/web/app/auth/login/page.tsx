@@ -13,6 +13,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "~/components/ui/field
 import { Input } from "~/components/ui/input";
 import { Spinner } from "~/components/ui/spinner";
 import { trpc } from "~/trpc/client";
+import { setSessionCookie } from "~/app/actions/auth";
 
 function LoginForm() {
   const router = useRouter();
@@ -42,7 +43,6 @@ function LoginForm() {
   const login = trpc.auth.login.useMutation({
     onSuccess: async (data: any) => {
       if (data?.accessToken && data?.refreshToken) {
-        const { setSessionCookie } = await import("~/app/actions/auth");
         await setSessionCookie(data.accessToken, data.refreshToken);
       }
       await utils.auth.me.invalidate();

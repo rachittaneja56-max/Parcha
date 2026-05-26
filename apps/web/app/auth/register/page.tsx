@@ -13,6 +13,7 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "~/c
 import { Input } from "~/components/ui/input";
 import { Spinner } from "~/components/ui/spinner";
 import { trpc } from "~/trpc/client";
+import { setSessionCookie } from "~/app/actions/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -41,7 +42,6 @@ export default function RegisterPage() {
     onSuccess: async (data: any) => {
       toast.success("Account created! Redirecting to Creator Dashboard...");
       if (data?.accessToken && data?.refreshToken) {
-        const { setSessionCookie } = await import("~/app/actions/auth");
         await setSessionCookie(data.accessToken, data.refreshToken);
       }
       await utils.auth.me.invalidate();
