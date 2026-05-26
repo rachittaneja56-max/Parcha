@@ -104,13 +104,20 @@ export default function DashboardPage() {
   });
 
   const [loggingOut, setLoggingOut] = useState(false);
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    try {
-      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+  const logoutMutation = trpc.auth.logout.useMutation({
+    onSuccess: async () => {
+      const { clearSessionCookie } = await import("~/app/actions/auth");
+      await clearSessionCookie();
       await utils.auth.me.invalidate();
       router.replace("/");
       router.refresh();
+    },
+  });
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logoutMutation.mutateAsync();
     } catch {
       setLoggingOut(false);
     }

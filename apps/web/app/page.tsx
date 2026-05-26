@@ -64,13 +64,21 @@ function Navbar({ sessionData, sessionLoading, mobileMenuOpen, setMobileMenuOpen
 
   // Logout handler
   const [loggingOut, setLoggingOut] = useState(false);
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    try {
-      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+  // Logout mutation
+  const logout = trpc.auth.logout.useMutation({
+    onSuccess: async () => {
+      const { clearSessionCookie } = await import("~/app/actions/auth");
+      await clearSessionCookie();
       await utils.auth.me.invalidate();
       router.replace("/");
       router.refresh();
+    }
+  });
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout.mutateAsync();
     } catch {
       setLoggingOut(false);
     }

@@ -38,8 +38,12 @@ export default function RegisterPage() {
   const googleProvider = providers.data?.find((p) => p.provider === "GOOGLE_OAUTH");
 
   const register = trpc.auth.register.useMutation({
-    onSuccess: async () => {
+    onSuccess: async (data: any) => {
       toast.success("Account created! Redirecting to Creator Dashboard...");
+      if (data?.accessToken && data?.refreshToken) {
+        const { setSessionCookie } = await import("~/app/actions/auth");
+        await setSessionCookie(data.accessToken, data.refreshToken);
+      }
       await utils.auth.me.invalidate();
       router.replace("/dashboard");
       router.refresh();
