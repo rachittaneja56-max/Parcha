@@ -396,7 +396,7 @@ function Hero({ sessionData }: { sessionData: any }) {
           transition={{ duration: 0.8, delay: 0.15 }}
           className="lg:col-span-6 flex flex-col items-center [perspective:1200px]"
         >
-=          <div className="flex flex-wrap gap-2 mb-6 justify-center z-20">
+          <div className="flex flex-wrap gap-2 mb-6 justify-center z-20">
             {[
                 { id: "terminal", label: "Terminal (CLI)" },
                 { id: "code_editor", label: "VS Code Editor" },
@@ -480,7 +480,7 @@ function Hero({ sessionData }: { sessionData: any }) {
                               value={handle}
                               onChange={(e) => setHandle(e.target.value)}
                               className="bg-transparent border-none outline-none font-mono text-emerald-200 w-full placeholder-emerald-900/40"
-                              placeholder="hacker_name"
+                              placeholder="rachit"
                               required
                               autoComplete="off"
                             />
@@ -627,7 +627,7 @@ function Hero({ sessionData }: { sessionData: any }) {
                                 value={handle}
                                 onChange={(e) => setHandle(e.target.value)}
                                 className="bg-transparent border-none outline-none text-[#98c379] caret-white p-0 m-0 w-32 focus:ring-0 text-[12px] font-mono h-auto"
-                                placeholder="developer_id"
+                                placeholder="rachit"
                                 required
                                 autoComplete="off"
                               />
@@ -745,7 +745,7 @@ function Hero({ sessionData }: { sessionData: any }) {
                           value={handle}
                           onChange={(e) => setHandle(e.target.value)}
                           className="w-full bg-[#0D1321] border border-zinc-800 focus:border-emerald-500 rounded-lg p-3 text-sm text-white transition-all outline-none"
-                          placeholder="e.g. rachit taneja"
+                          placeholder="rachit"
                           required
                           autoComplete="off"
                         />
@@ -859,7 +859,7 @@ function Hero({ sessionData }: { sessionData: any }) {
                             value={handle}
                             onChange={(e) => setHandle(e.target.value)}
                             className="bg-transparent border-none outline-none font-mono text-xs text-black w-full"
-                            placeholder="handle"
+                            placeholder="rachit"
                             required
                             autoComplete="off"
                           />
