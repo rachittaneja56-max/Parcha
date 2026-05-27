@@ -143,7 +143,7 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
-      await logout.mutateAsync();
+      await logout.mutateAsync().catch(() => {});
       await clearSessionCookie();
       await utils.auth.me.invalidate();
       router.replace("/");
@@ -182,7 +182,8 @@ export default function DashboardPage() {
 
   const totalViews = forms.reduce((acc, form) => acc + (form.views || 0), 0);
   const totalResponses = forms.reduce((acc, form) => acc + (form.responseCount || 0), 0);
-  const completionRate = totalViews > 0 ? ((totalResponses / totalViews) * 100).toFixed(1) : "0.0";
+  const rawRate = totalViews > 0 ? (totalResponses / totalViews) * 100 : 0;
+  const completionRate = Math.min(rawRate, 100).toFixed(1);
   const numActiveForms = forms.filter(f => f.status === "published").length;
 
   const activeForms = forms.slice(0, 4);

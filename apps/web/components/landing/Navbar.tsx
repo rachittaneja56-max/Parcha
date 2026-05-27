@@ -46,7 +46,7 @@ export function Navbar({
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
-      await logout.mutateAsync();
+      await logout.mutateAsync().catch(() => {});
       await clearSessionCookie();
       await utils.auth.me.invalidate();
       router.replace("/");

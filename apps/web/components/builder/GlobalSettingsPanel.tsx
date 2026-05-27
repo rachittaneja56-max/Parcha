@@ -28,6 +28,7 @@ import {
 
 export type FormSettings = {
   title: string;
+  slug?: string;
   status: "draft" | "published";
   visibility: "public" | "unlisted" | "unpublished";
   requireAuth: boolean;
@@ -35,6 +36,8 @@ export type FormSettings = {
   successMessage: string;
   theme: "terminal" | "windowsxp" | "standard" | "code_editor";
   webhookUrl?: string | null;
+  expiresAt?: string | null;
+  maxResponses?: number | null;
 };
 
 export function GlobalSettingsPanel({
@@ -68,6 +71,22 @@ export function GlobalSettingsPanel({
               onPointerDown={(e) => e.stopPropagation()}
               className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100"
             />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+              Form URL (Slug)
+            </label>
+            <div className="flex items-center gap-2">
+              <span className="text-zinc-500 text-sm font-mono">parcha95.com/f/</span>
+              <Input
+                value={settings.slug || ""}
+                onChange={(e) => onChange({ slug: e.target.value })}
+                onPointerDown={(e) => e.stopPropagation()}
+                placeholder="my-awesome-form"
+                className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100 flex-1"
+              />
+            </div>
           </div>
 
           <div className="flex items-center justify-between">
@@ -127,7 +146,36 @@ export function GlobalSettingsPanel({
             />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 pt-4 border-t border-zinc-800">
+            <label className="text-[11px] font-mono uppercase tracking-widest text-amber-500 font-semibold">
+              Response Limits & Expiry
+            </label>
+            
+            <div className="flex flex-col gap-1 mt-2">
+              <label className="text-[11px] font-mono uppercase text-muted-foreground">Max Responses</label>
+              <Input
+                type="number"
+                placeholder="Unlimited"
+                value={settings.maxResponses || ""}
+                onChange={(e) => onChange({ maxResponses: e.target.value ? parseInt(e.target.value) : null })}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1 mt-2">
+              <label className="text-[11px] font-mono uppercase text-muted-foreground">Expiry Date</label>
+              <Input
+                type="datetime-local"
+                value={settings.expiresAt ? new Date(settings.expiresAt).toISOString().slice(0, 16) : ""}
+                onChange={(e) => onChange({ expiresAt: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 pt-4 border-t border-zinc-800">
             <label className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
               Success Message
             </label>

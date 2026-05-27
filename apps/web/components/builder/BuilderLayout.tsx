@@ -155,14 +155,17 @@ export default function BuilderLayout({
       }
       setGlobalSettings({
         title: formQuery.data.title ?? "",
+        slug: formQuery.data.slug ?? undefined,
         status: (formQuery.data.status as "draft" | "published") ?? "draft",
         visibility:
           (formQuery.data.visibility as "public" | "unlisted" | "unpublished") ?? "unlisted",
         requireAuth: formQuery.data.requireAuth ?? false,
         password: formQuery.data.password ?? null,
         successMessage: formQuery.data.successMessage ?? "Response recorded successfully.",
-        theme: (formQuery.data.theme as FormSettings["theme"]) ?? "terminal",
+        theme: (formQuery.data.theme as "terminal" | "windowsxp" | "standard" | "code_editor") ?? "terminal",
         webhookUrl: formQuery.data.webhookUrl ?? null,
+        expiresAt: formQuery.data.expiresAt ? new Date(formQuery.data.expiresAt).toISOString() : null,
+        maxResponses: formQuery.data.maxResponses ?? null,
       });
       initialLoadDone.current = true;
     }

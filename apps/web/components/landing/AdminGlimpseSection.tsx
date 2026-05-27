@@ -39,7 +39,8 @@ const MOCK_FORMS = [
 
 const totalViews = MOCK_FORMS.reduce((acc, f) => acc + f.views, 0);
 const totalResponses = MOCK_FORMS.reduce((acc, f) => acc + f.responseCount, 0);
-const completionRate = totalViews > 0 ? ((totalResponses / totalViews) * 100).toFixed(1) : "0.0";
+const rawRate = totalViews > 0 ? (totalResponses / totalViews) * 100 : 0;
+const completionRate = Math.min(rawRate, 100).toFixed(1);
 const numActiveForms = MOCK_FORMS.filter((f) => f.status === "published").length;
 
 export const AdminGlimpseSection = () => {
@@ -47,7 +48,6 @@ export const AdminGlimpseSection = () => {
     <section className="relative py-16 px-6 bg-[#050505] border-t border-zinc-900">
       <div className="max-w-5xl mx-auto flex flex-col gap-8">
 
-        {/* Section Header — consistent with Features / Pricing */}
         <div className="flex flex-col gap-3 max-w-2xl">
           <div className="text-xs font-mono uppercase tracking-widest text-emerald-400 border border-emerald-900/50 bg-emerald-950/20 px-3 py-1 rounded-full w-fit">
             Command Center

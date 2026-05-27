@@ -106,6 +106,14 @@ class ResponseService {
       throw new TRPCError({ code: "UNAUTHORIZED", message: "Authentication required to submit this form" });
     }
 
+    if (form.expiresAt && new Date() > new Date(form.expiresAt)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "This form is no longer accepting responses (Expired)." });
+    }
+
+    if (form.maxResponses !== null && form.analytics && form.analytics.submissions >= form.maxResponses) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "This form has reached its maximum number of responses." });
+    }
+
     return form;
   }
 

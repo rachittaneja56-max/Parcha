@@ -30,6 +30,7 @@ export const UpdateSettingsSchema = z.object({
   formId: z.string().uuid(),
   updates: z.object({
     title: z.string().optional(),
+    slug: z.string().optional(),
     status: z.enum(["draft", "published"]).optional(),
     visibility: z.enum(["public", "unlisted", "unpublished"]).optional(),
     theme: z.enum(["terminal", "windowsxp", "standard", "code_editor"]).optional(),
@@ -37,6 +38,8 @@ export const UpdateSettingsSchema = z.object({
     password: z.string().nullable().optional(),
     successMessage: z.string().optional(),
     webhookUrl: z.string().url("Must be a valid URL").nullable().optional(),
+    expiresAt: z.string().nullable().optional(),
+    maxResponses: z.number().nullable().optional(),
   }),
 });
 export type UpdateSettingsInput = z.infer<typeof UpdateSettingsSchema>;
