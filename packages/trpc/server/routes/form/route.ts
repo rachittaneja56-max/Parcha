@@ -1,3 +1,12 @@
+/**
+ * @file route.ts (Form Router)
+ * @description Handles all CRUD operations for Forms.
+ * Ensures proper ownership checks (a user can only modify their own forms, unless they are an admin).
+ * Also exposes public endpoints for respondents to fetch form schemas safely.
+ *
+ * @dependencies
+ * - formService (business logic for creating, updating, and sanitizing forms)
+ */
 import { z } from "zod";
 import { zodUndefinedModel } from "@repo/validators";
 import { router, protectedProcedure, publicProcedure, verifiedProcedure } from "../../trpc";
@@ -17,6 +26,11 @@ const TAGS = ["Forms"];
 const getPath = generatePath("/forms");
 
 export const formRouter = router({
+  /**
+   * @procedure create
+   * @description Creates a new draft form for the authenticated user.
+   * @requires verifiedProcedure (User must have verified email)
+   */
   create: verifiedProcedure
     .meta({
       openapi: {
@@ -129,6 +143,12 @@ export const formRouter = router({
       return form;
     }),
 
+  /**
+   * @procedure getPublicForm
+   * @description Fetches sanitized form data for public respondents.
+   * Strips sensitive properties and internal metadata before returning the schema.
+   * @requires publicProcedure
+   */
   getPublicForm: publicProcedure
     .use(rateLimitMiddleware)
     .meta({

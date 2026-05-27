@@ -1,3 +1,15 @@
+/**
+ * @file forms.ts
+ * @description Defines the core Form schema for Parcha95.
+ * A Form is the central entity created by users, containing metadata, theme settings,
+ * access controls, and the actual form structure stored as JSONB (`schema`).
+ * 
+ * @dependencies
+ * - Drizzle ORM for schema definition
+ * - usersTable (Creator relationship)
+ * - responsesTable (1-to-Many relation with submitted responses)
+ * - analyticsTable (1-to-1 relation for view tracking)
+ */
 import { pgTable, uuid, varchar, boolean, timestamp, integer, jsonb, pgEnum } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { usersTable } from "./user";

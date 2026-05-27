@@ -1,3 +1,12 @@
+/**
+ * @file route.ts (Admin Router)
+ * @description Defines all administrative tRPC procedures for the platform.
+ * These endpoints are strictly protected by `adminProcedure` and allow global
+ * dashboard operations like telemetry, form moderation, and password management.
+ * 
+ * @dependencies
+ * - adminService (contains the business logic for admin actions)
+ */
 import { z } from "zod";
 import { router, adminProcedure, protectedProcedure } from "../../trpc";
 import { adminService } from "../../services";
@@ -9,6 +18,11 @@ const TAGS = ["Admin"];
 const getPath = generatePath("/admin");
 
 export const adminRouter = router({
+  /**
+   * @procedure getTelemetry
+   * @description Fetches global platform statistics (user count, form count, response count).
+   * @requires adminProcedure
+   */
   getTelemetry: adminProcedure
     .meta({
       openapi: {

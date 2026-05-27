@@ -1,3 +1,13 @@
+/**
+ * @file RespondentTerminal.tsx
+ * @description The entry point for respondents filling out a public form.
+ * Fetches the form schema based on the provided form ID or slug, handles password protection logic,
+ * and delegates rendering to the appropriate `ThemeEngine` based on the form's theme setting.
+ * 
+ * @dependencies
+ * - trpc.form.getPublicForm (to fetch sanitized schema)
+ * - ThemeEngine (to render the correct visual theme)
+ */
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
@@ -8,6 +18,11 @@ import fpPromise from "@fingerprintjs/fingerprintjs";
 import { ThemeEngine } from "../themes/ThemeEngine";
 import { Spinner } from "~/components/ui/spinner";
 
+/**
+ * @component RespondentTerminal
+ * @description Manages the lifecycle of a respondent's form session (fetching, password prompts, and optimistic UI submission).
+ * Dispatches the final `answers` payload to `submitResponseAsync`.
+ */
 export function RespondentTerminal({ formId }: { formId: string }) {
   const router = useRouter();
 

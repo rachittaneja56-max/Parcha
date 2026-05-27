@@ -1,3 +1,11 @@
+/**
+ * @file page.tsx (Admin Dashboard)
+ * @description The global admin dashboard for Parcha95 ("Crazy SaaS" theme).
+ * Provides a high-level overview of platform telemetry and allows admins to moderate (unpublish) active forms.
+ * 
+ * @dependencies
+ * - trpc.admin router (telemetry and moderation mutations)
+ */
 "use client";
 
 import { useEffect } from "react";
@@ -7,6 +15,12 @@ import { trpc } from "~/trpc/client";
 import { toast } from "sonner";
 import { Activity, Users, FileText, Database, ShieldAlert } from "lucide-react";
 
+/**
+ * @component AdminDashboardPage
+ * @description Renders the global admin dashboard. Strictly checks for the 'admin' role on the client-side session.
+ * Displays KPI cards for total users, forms, and submissions, along with a recent forms table.
+ * @requires Admin Role ('admin')
+ */
 export default function AdminDashboardPage() {
   const router = useRouter();
 

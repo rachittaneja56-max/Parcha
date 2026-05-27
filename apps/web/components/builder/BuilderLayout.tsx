@@ -1,3 +1,13 @@
+/**
+ * @file BuilderLayout.tsx
+ * @description The core layout and state manager for the Parcha95 Form Builder.
+ * Integrates dnd-kit for drag-and-drop mechanics, handles global form state (schema, settings),
+ * and implements auto-save debouncing via tRPC mutations.
+ * 
+ * @dependencies
+ * - @dnd-kit/core (Drag and drop context)
+ * - trpc (API layer for fetching/saving schema)
+ */
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -58,6 +68,11 @@ import { FloatingPreviewWidget } from "./FloatingPreviewWidget";
 import { GlobalSettingsPanel, type FormSettings } from "./GlobalSettingsPanel";
 import { ResponsesAnalytics } from "./ResponsesAnalytics";
 
+/**
+ * @component BuilderLayout
+ * @description Main container for the form builder interface. Manages the active view (Build/Settings/Analytics),
+ * tracks the drag-and-drop state, and auto-saves the `schema` array to the database.
+ */
 export default function BuilderLayout({ formId }: { formId: string }) {
   const router = useRouter();
 

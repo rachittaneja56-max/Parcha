@@ -1,3 +1,14 @@
+/**
+ * @file user.ts
+ * @description Represents the central User model for Parcha95.
+ * This file defines the PostgreSQL schema for users using Drizzle ORM.
+ * Key fields include authentication (email, passwordHash) and RBAC (role).
+ * Roles dictate whether a user is a standard creator ('user') or has global dashboard access ('admin').
+ *
+ * @dependencies
+ * - Drizzle ORM for schema definition
+ * - relations (links users to their created forms)
+ */
 import {
   pgTable,
   uuid,
