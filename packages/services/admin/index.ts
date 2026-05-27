@@ -1,23 +1,24 @@
 import { eq, sql, desc, ilike, or } from "@repo/database";
 import type { db } from "@repo/database";
 import { TRPCError } from "@trpc/server";
-import { formsTable, analyticsTable, usersTable, settingsTable } from "@repo/database/schema";
+import { formsTable, analyticsTable, usersTable, settingsTable, responsesTable } from "@repo/database/schema";
 import bcrypt from "bcrypt";
 import { invalidatePublicFormsCache } from "../form/cache";
+import { delCache } from "@repo/redis";
 
 class AdminService {
   constructor(private readonly dbInstance: typeof db) {}
 
   public async getPlatformTelemetry() {
-    const [userCountResult] = await this.dbInstance
-      .select({ count: sql<number>`count(*)::int` })
-      .from(usersTable);
-    const [formCountResult] = await this.dbInstance
-      .select({ count: sql<number>`count(*)::int` })
-      .from(formsTable);
-    const [submissionCountResult] = await this.dbInstance
-      .select({ total: sql<number>`sum(${analyticsTable.submissions})::int` })
-      .from(analyticsTable);
+    const [
+      [userCountResult],
+      [formCountResult],
+      [submissionCountResult],
+    ] = await Promise.all([
+      this.dbInstance.select({ count: sql<number>`count(*)::int` }).from(usersTable),
+      this.dbInstance.select({ count: sql<number>`count(*)::int` }).from(formsTable),
+      this.dbInstance.select({ total: sql<number>`sum(${analyticsTable.submissions})::int` }).from(analyticsTable),
+    ]);
 
     return {
       totalUsers: userCountResult?.count || 0,
@@ -94,9 +95,6 @@ class AdminService {
       if (!form) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Form not found" });
       }
-
-      const { responsesTable } = await import("@repo/database/schema");
-      const { delCache } = await import("@repo/redis");
 
       await this.dbInstance.delete(responsesTable).where(eq(responsesTable.formId, formId));
       await this.dbInstance.delete(analyticsTable).where(eq(analyticsTable.formId, formId));
