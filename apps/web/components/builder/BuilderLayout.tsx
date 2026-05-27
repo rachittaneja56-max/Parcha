@@ -97,6 +97,7 @@ export default function BuilderLayout({
     password: null,
     successMessage: "Response recorded successfully.",
     theme: "terminal",
+    webhookUrl: null,
   });
 
   const initialLoadDone = useRef(false);
@@ -138,6 +139,7 @@ export default function BuilderLayout({
         password: formQuery.data.password ?? null,
         successMessage: formQuery.data.successMessage ?? "Response recorded successfully.",
         theme: (formQuery.data.theme as FormSettings["theme"]) ?? "terminal",
+        webhookUrl: formQuery.data.webhookUrl ?? null,
       });
       initialLoadDone.current = true;
     }
