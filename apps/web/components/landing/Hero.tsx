@@ -142,14 +142,26 @@ export function Hero({ sessionData }: { sessionData: SessionData | undefined | n
             <Sparkles className="w-3.5 h-3.5" /> Beautiful Forms Lineup
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-white leading-[1.05]">
-            Create forms your users will love.
-          </h1>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-white leading-[1.05]">
+              Create forms your users will love.
+            </h1>
+          </motion.div>
 
-          <p className="text-zinc-400 text-lg md:text-xl mt-2 max-w-xl leading-relaxed">
-            Drop-dead gorgeous forms in seconds. Highly customizable, blazingly fast, and completely
-            type-safe. Switch themes instantly to match your brand&apos;s vibe.
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <p className="text-zinc-400 text-lg md:text-xl mt-2 max-w-xl leading-relaxed">
+              Drop-dead gorgeous forms in seconds. Highly customizable, blazingly fast, and completely
+              type-safe. Switch themes instantly to match your brand&apos;s vibe.
+            </p>
+          </motion.div>
 
           <div className="flex flex-wrap items-center gap-4 pt-4">
             <Link href={isLoggedIn ? "/dashboard" : "/auth/register"}>

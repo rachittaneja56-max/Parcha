@@ -3,38 +3,35 @@ import { env } from "../env";
 import { logger } from "@repo/logger";
 
 export default class EmailService {
-  private getTransporter() {
-    if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS) {
-      return null;
-    }
-    return nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: env.SMTP_PORT || 587,
-      secure: env.SMTP_PORT === 465,
-      auth: {
-        user: env.SMTP_USER,
-        pass: env.SMTP_PASS,
-      },
-    });
-  }
-
   public async sendEmail(to: string, subject: string, text: string) {
-    const transporter = this.getTransporter();
-    if (!transporter) {
-      logger.warn("[EMAIL] Transporter not configured, skipping email", { to, subject });
+    if (!env.SMTP_PASS) {
+      logger.warn("[EMAIL] Resend API key (SMTP_PASS) not configured, skipping email", { to, subject });
       return;
     }
-    
+
     try {
-      await transporter.sendMail({
-        from: env.SMTP_FROM || env.SMTP_USER,
-        to,
-        subject,
-        text,
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${env.SMTP_PASS}`,
+        },
+        body: JSON.stringify({
+          from: env.SMTP_FROM || "onboarding@resend.dev",
+          to,
+          subject,
+          text,
+        }),
       });
+
+      if (!response.ok) {
+        const errData = await response.text();
+        throw new Error(`Resend API returned ${response.status}: ${errData}`);
+      }
+
       logger.info("[EMAIL] Sent successfully", { to, subject });
     } catch (error) {
-      logger.error("[EMAIL] Failed to send email", { error, to, subject });
+      logger.error("[EMAIL] Failed to send email via Resend API", { error, to, subject });
     }
   }
 
