@@ -4,7 +4,7 @@ import { serverRouter } from "./index";
 export const openApiDocument = generateOpenApiDocument(serverRouter, {
   title: "Parcha95 API",
   version: "1.0.0",
-  baseUrl: "http://localhost:8000/api",
+  baseUrl: process.env.BASE_URL ? `${process.env.BASE_URL}/api` : "http://localhost:8000/api",
   securitySchemes: {
     BearerAuth: {
       type: "http",

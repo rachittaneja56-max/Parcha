@@ -36,7 +36,10 @@ logger.debug(`docs: ${env.BASE_URL}/docs`);
 app.use("/docs", async (req, res, next) => {
   try {
     const { apiReference } = await (new Function('return import("@scalar/express-api-reference")'))();
-    apiReference({ url: "/api/openapi.json" })(req, res, next);
+    apiReference({ 
+      theme: "moon",
+      spec: { content: openApiDocument } 
+    })(req, res, next);
   } catch (error) {
     next(error);
   }
