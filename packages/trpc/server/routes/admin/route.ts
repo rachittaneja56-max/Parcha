@@ -42,28 +42,32 @@ export const adminRouter = router({
     }),
 
   /**
-   * @procedure getRecentForms
-   * @description Returns the 10 most recently created forms across all users.
+   * @procedure getAllForms
+   * @description Returns paginated forms across all users, with optional search.
    * Used on the admin dashboard's moderation queue.
    * @requires adminProcedure
    * @output Array of form records with creator info
    */
-  getRecentForms: adminProcedure
+  getAllForms: adminProcedure
     .meta({
       openapi: {
         method: "GET",
-        path: getPath("/recent-forms"),
+        path: getPath("/all-forms"),
         protect: true,
         tags: TAGS,
-        summary: "Get recent forms",
-        successDescription: "Recent forms for admins",
+        summary: "Get all forms with search",
+        successDescription: "All forms for admins",
         errorResponses: { 401: "Not authenticated", 403: "Not authorized as admin" },
       },
     })
-    .input(zodUndefinedModel)
+    .input(z.object({
+      search: z.string().optional(),
+      limit: z.number().min(1).max(100).optional().default(20),
+      offset: z.number().min(0).optional().default(0),
+    }))
     .output(z.any())
-    .query(async () => {
-      return await adminService.getRecentForms();
+    .query(async ({ input }) => {
+      return await adminService.getAllForms(input.search, input.limit, input.offset);
     }),
 
   /**

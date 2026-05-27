@@ -13,7 +13,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { trpc } from "~/trpc/client";
 import { toast } from "sonner";
-import { Activity, Users, FileText, Database, ShieldAlert } from "lucide-react";
+import { Activity, Users, FileText, Database, ShieldAlert, Search } from "lucide-react";
+import { useDebounce } from "use-debounce";
+import { Input } from "~/components/ui/input";
 
 /**
  * @component AdminDashboardPage
@@ -37,6 +39,9 @@ export default function AdminDashboardPage() {
     }
   }, [session, sessionLoading, sessionError, router]);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch] = useDebounce(searchQuery, 500);
+
   const { data: telemetry, isLoading: telemetryLoading } = trpc.admin.getTelemetry.useQuery(
     undefined,
     { enabled: session?.user?.role === "admin" },
@@ -46,13 +51,18 @@ export default function AdminDashboardPage() {
     data: recentForms,
     isLoading: formsLoading,
     refetch: refetchForms,
-  } = trpc.admin.getRecentForms.useQuery(undefined, {
-    enabled: session?.user?.role === "admin",
-  });
+  } = trpc.admin.getAllForms.useQuery(
+    { search: debouncedSearch, limit: 50 }, 
+    { enabled: session?.user?.role === "admin" }
+  );
 
   const moderateMutation = trpc.admin.moderateForm.useMutation({
-    onSuccess: () => {
-      toast.success("Form unpublished successfully.");
+    onSuccess: (_, variables) => {
+      if (variables.action === "delete") {
+        toast.success("Form deleted permanently.");
+      } else {
+        toast.success(`Form ${variables.action}ed successfully.`);
+      }
       refetchForms();
     },
     onError: (err) => {
@@ -63,6 +73,18 @@ export default function AdminDashboardPage() {
   const handleUnpublish = (formId: string) => {
     if (confirm("Are you sure you want to unpublish this form?")) {
       moderateMutation.mutate({ formId, action: "unpublish" });
+    }
+  };
+
+  const handlePublish = (formId: string) => {
+    if (confirm("Are you sure you want to force publish this form?")) {
+      moderateMutation.mutate({ formId, action: "publish" });
+    }
+  };
+
+  const handleDelete = (formId: string) => {
+    if (confirm("WARNING: This will permanently delete the form and all its responses. Continue?")) {
+      moderateMutation.mutate({ formId, action: "delete" });
     }
   };
 
@@ -153,13 +175,24 @@ export default function AdminDashboardPage() {
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-sm font-semibold tracking-widest text-zinc-400 uppercase font-mono">
-              Recent Forms & Moderation
+              Forms & Moderation
             </h2>
-            {moderateMutation.isPending && (
-              <span className="text-xs font-mono text-emerald-500 animate-pulse">
-                Processing...
-              </span>
-            )}
+            <div className="flex items-center gap-4">
+              {moderateMutation.isPending && (
+                <span className="text-xs font-mono text-emerald-500 animate-pulse">
+                  Processing...
+                </span>
+              )}
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <Input
+                  placeholder="Search forms or creators..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 h-9 bg-zinc-900 border-zinc-800 text-zinc-200 text-xs font-mono focus-visible:ring-emerald-500"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="bg-[#0A0A0A] border border-zinc-800/50 rounded-2xl overflow-hidden shadow-sm">
@@ -252,14 +285,30 @@ export default function AdminDashboardPage() {
                           >
                             [ Stats ]
                           </Link>
+                          {form.visibility !== "public" && (
+                            <button
+                              onClick={() => handlePublish(form.id)}
+                              disabled={moderateMutation.isPending}
+                              className="text-emerald-400 hover:text-emerald-300 disabled:opacity-30 disabled:cursor-not-allowed px-2 py-1 rounded-md text-xs font-mono transition-all"
+                            >
+                              [ Publish ]
+                            </button>
+                          )}
+                          {form.visibility === "public" && (
+                            <button
+                              onClick={() => handleUnpublish(form.id)}
+                              disabled={moderateMutation.isPending}
+                              className="text-amber-400 hover:text-amber-300 disabled:opacity-30 disabled:cursor-not-allowed px-2 py-1 rounded-md text-xs font-mono transition-all"
+                            >
+                              [ Unpublish ]
+                            </button>
+                          )}
                           <button
-                            onClick={() => handleUnpublish(form.id)}
-                            disabled={
-                              form.visibility === "unpublished" || moderateMutation.isPending
-                            }
-                            className="text-red-400 hover:text-red-300 disabled:opacity-30 disabled:cursor-not-allowed px-2 py-1 rounded-md text-xs font-mono transition-all"
+                            onClick={() => handleDelete(form.id)}
+                            disabled={moderateMutation.isPending}
+                            className="text-red-500 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed px-2 py-1 rounded-md text-xs font-mono transition-all"
                           >
-                            [ Unpublish ]
+                            [ Delete ]
                           </button>
                         </td>
                       </tr>

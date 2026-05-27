@@ -26,8 +26,10 @@ class AdminService {
     };
   }
 
-  public async getRecentForms() {
-    return await this.dbInstance
+  public async getAllForms(search?: string, limit: number = 20, offset: number = 0) {
+    const { ilike, or } = await import("drizzle-orm");
+    
+    let baseQuery = this.dbInstance
       .select({
         id: formsTable.id,
         title: formsTable.title,
@@ -39,13 +41,25 @@ class AdminService {
       })
       .from(formsTable)
       .innerJoin(usersTable, eq(formsTable.creatorId, usersTable.id))
-      .leftJoin(analyticsTable, eq(formsTable.id, analyticsTable.formId))
+      .leftJoin(analyticsTable, eq(formsTable.id, analyticsTable.formId));
+
+    if (search) {
+      baseQuery = baseQuery.where(
+        or(
+          ilike(formsTable.title, `%${search}%`),
+          ilike(usersTable.email, `%${search}%`)
+        )
+      ) as any;
+    }
+
+    return await baseQuery
       .groupBy(formsTable.id, usersTable.email)
       .orderBy(desc(formsTable.createdAt))
-      .limit(10);
+      .limit(limit)
+      .offset(offset);
   }
 
-  public async moderateForm(formId: string, action: "unpublish") {
+  public async moderateForm(formId: string, action: "unpublish" | "publish" | "delete") {
     if (action === "unpublish") {
       const [updatedForm] = await this.dbInstance
         .update(formsTable)
@@ -59,6 +73,43 @@ class AdminService {
       await invalidatePublicFormsCache();
       return updatedForm;
     }
+    
+    if (action === "publish") {
+      const [updatedForm] = await this.dbInstance
+        .update(formsTable)
+        .set({ visibility: "public", status: "published" })
+        .where(eq(formsTable.id, formId))
+        .returning();
+
+      if (!updatedForm) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Form not found" });
+      }
+      await invalidatePublicFormsCache();
+      return updatedForm;
+    }
+
+    if (action === "delete") {
+      const form = await this.dbInstance.query.formsTable.findFirst({
+        where: eq(formsTable.id, formId),
+      });
+
+      if (!form) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Form not found" });
+      }
+
+      const { responsesTable } = await import("@repo/database/schema");
+      const { delCache } = await import("@repo/redis");
+
+      await this.dbInstance.delete(responsesTable).where(eq(responsesTable.formId, formId));
+      await this.dbInstance.delete(analyticsTable).where(eq(analyticsTable.formId, formId));
+      await this.dbInstance.delete(formsTable).where(eq(formsTable.id, formId));
+      
+      await invalidatePublicFormsCache();
+      await delCache(`form:${formId}`);
+      
+      return { success: true, deletedId: formId };
+    }
+
     throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid moderation action" });
   }
 

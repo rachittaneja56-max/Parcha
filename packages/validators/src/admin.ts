@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const ModerateFormSchema = z.object({
   formId: z.string().uuid().describe("The unique identifier of the form to moderate"),
-  action: z.enum(["unpublish"]).describe("The moderation action to apply"),
+  action: z.enum(["unpublish", "publish", "delete"]).describe("The moderation action to apply"),
 });
 
 export const ChangeAdminPasswordSchema = z.object({
