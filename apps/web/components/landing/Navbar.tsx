@@ -41,10 +41,12 @@ export function Navbar({
 
   const [loggingOut, setLoggingOut] = useState(false);
 
+  const logout = trpc.auth.logout.useMutation();
+
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
-      await clearSessionCookie();
+      await logout.mutateAsync();
       await utils.auth.me.invalidate();
       router.replace("/");
       router.refresh();

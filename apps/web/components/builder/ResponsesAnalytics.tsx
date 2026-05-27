@@ -51,8 +51,9 @@ export function ResponsesAnalytics({
 }) {
   const utils = trpc.useUtils();
   const formQuery = trpc.form.getFormById.useQuery({ formId });
-  const responsesQuery = trpc.response.getResponses.useQuery(
-    { formId },
+  const dashboardStats = trpc.analytics.getDashboardStats.useQuery({ formId });
+  const responsesQuery = trpc.analytics.getAllResponses.useQuery(
+    { formId, limit: 1000, offset: 0 },
     { initialData: initialResponses, refetchInterval: 5000 }
   );
 
@@ -75,7 +76,7 @@ export function ResponsesAnalytics({
     }
   );
 
-  if (formQuery.isLoading || responsesQuery.isLoading) {
+  if (formQuery.isLoading || responsesQuery.isLoading || dashboardStats.isLoading) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Spinner />
@@ -113,9 +114,11 @@ export function ResponsesAnalytics({
     URL.revokeObjectURL(url);
   };
 
-  const views = form?.views || 0;
-  const totalResponses = responses.length;
-  const conversionRate = views > 0 ? ((totalResponses / views) * 100).toFixed(1) : "0.0";
+  const views = dashboardStats.data?.stats?.views || form?.views || 0;
+  const totalResponses = dashboardStats.data?.stats?.submissions || responses.length;
+  const conversionRate = dashboardStats.data?.stats?.conversionRate 
+    ? dashboardStats.data.stats.conversionRate.toFixed(1) 
+    : (views > 0 ? ((totalResponses / views) * 100).toFixed(1) : "0.0");
 
   let totalTime = 0;
   let timeCount = 0;
