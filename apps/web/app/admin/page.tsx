@@ -32,12 +32,11 @@ export default function AdminDashboardPage() {
   } = trpc.auth.me.useQuery(undefined, { retry: false });
 
   useEffect(() => {
-    if (!sessionLoading && (sessionError || !session?.user || session.user.role !== "admin")) {
+    if (!sessionLoading && (sessionError || !session?.user)) {
       router.push("/auth/login?redirect=/admin");
     }
   }, [session, sessionLoading, sessionError, router]);
 
-  // Data Fetching
   const { data: telemetry, isLoading: telemetryLoading } = trpc.admin.getTelemetry.useQuery(
     undefined,
     { enabled: session?.user?.role === "admin" },
@@ -75,8 +74,26 @@ export default function AdminDashboardPage() {
     );
   }
 
-  if (!session?.user || session.user.role !== "admin") {
+  if (!session?.user) {
     return null; // Will redirect
+  }
+
+  if (session.user.role !== "admin") {
+    return (
+      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-6 text-center">
+        <ShieldAlert className="w-16 h-16 text-red-500 mb-6" />
+        <h1 className="text-4xl font-extrabold tracking-tight text-white mb-4">Access Denied</h1>
+        <p className="text-zinc-400 max-w-md mb-8 text-lg">
+          You do not have the required administrator privileges to view this page.
+        </p>
+        <Link 
+          href="/dashboard" 
+          className="bg-zinc-100 hover:bg-white text-zinc-950 font-semibold px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
+        >
+          Return to Dashboard
+        </Link>
+      </div>
+    );
   }
 
   return (

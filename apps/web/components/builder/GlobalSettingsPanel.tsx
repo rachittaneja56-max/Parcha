@@ -24,6 +24,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Calendar } from "~/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
 
 export type FormSettings = {
@@ -165,13 +173,40 @@ export function GlobalSettingsPanel({
 
             <div className="flex flex-col gap-1 mt-2">
               <label className="text-[11px] font-mono uppercase text-muted-foreground">Expiry Date</label>
-              <Input
-                type="datetime-local"
-                value={settings.expiresAt ? new Date(settings.expiresAt).toISOString().slice(0, 16) : ""}
-                onChange={(e) => onChange({ expiresAt: e.target.value ? new Date(e.target.value).toISOString() : null })}
-                onPointerDown={(e) => e.stopPropagation()}
-                className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100"
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`w-full justify-start text-left font-mono h-8 bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 hover:bg-zinc-900 hover:text-zinc-100 ${
+                      !settings.expiresAt ? "text-muted-foreground" : "text-zinc-100"
+                    }`}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {settings.expiresAt ? format(new Date(settings.expiresAt), "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-zinc-950 border-zinc-800" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={settings.expiresAt ? new Date(settings.expiresAt) : undefined}
+                    onSelect={(date) => onChange({ expiresAt: date ? date.toISOString() : null })}
+                    initialFocus
+                    className="text-zinc-100"
+                  />
+                  {settings.expiresAt && (
+                    <div className="p-3 border-t border-zinc-800">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-red-400 hover:text-red-300 hover:bg-red-950/30"
+                        onClick={() => onChange({ expiresAt: null })}
+                      >
+                        Clear Date
+                      </Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
