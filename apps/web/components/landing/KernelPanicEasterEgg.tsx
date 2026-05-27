@@ -30,17 +30,13 @@ export const KernelPanicEasterEgg = () => {
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.target instanceof HTMLInputElement ||
+      const isInput = e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement ||
-        (e.target as HTMLElement).isContentEditable
-      ) {
-        return;
-      }
+        (e.target as HTMLElement).isContentEditable;
 
       const key = e.key;
 
-      if (key === "`") {
+      if (key === "`" && !isInput) {
         backtickCount++;
         clearTimeout(backtickTimer);
         backtickTimer = setTimeout(() => {
@@ -54,20 +50,24 @@ export const KernelPanicEasterEgg = () => {
         }
       }
 
-      keyBuffer += key.toLowerCase();
-      if (keyBuffer.length > 30) {
-        keyBuffer = keyBuffer.substring(keyBuffer.length - 30);
-      }
+      // Ignore single character keys like Shift, Control, etc. if we just want printable characters
+      // But we can just append e.key. It might append "Shift", we should only append if length is 1
+      if (key.length === 1) {
+        keyBuffer += key.toLowerCase();
+        if (keyBuffer.length > 30) {
+          keyBuffer = keyBuffer.substring(keyBuffer.length - 30);
+        }
 
-      if (
-        keyBuffer.endsWith("rm -rf") ||
-        keyBuffer.endsWith("rm-rf") ||
-        keyBuffer.endsWith("sudo rm -rf") ||
-        keyBuffer.endsWith("crash") ||
-        keyBuffer.endsWith("panic")
-      ) {
-        triggerMeltdown();
-        keyBuffer = "";
+        if (
+          keyBuffer.endsWith("rm -rf") ||
+          keyBuffer.endsWith("rm-rf") ||
+          keyBuffer.endsWith("sudo rm -rf") ||
+          keyBuffer.endsWith("crash") ||
+          keyBuffer.endsWith("panic")
+        ) {
+          triggerMeltdown();
+          keyBuffer = "";
+        }
       }
     };
 
