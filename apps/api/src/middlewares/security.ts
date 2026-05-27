@@ -9,7 +9,12 @@ securityRouter.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'none'"],
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "https://cdn.jsdelivr.net"],
+        connectSrc: ["'self'"],
       },
     },
   })
