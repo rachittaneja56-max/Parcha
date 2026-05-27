@@ -63,4 +63,22 @@ export const analyticsRouter = router({
         };
       });
     }),
+
+  onNewView: protectedProcedure
+    .input(GetDashboardAnalyticsSchema)
+    .subscription(({ input }) => {
+      return observable<any>((emit) => {
+        const onNewView = (data: { formId: string }) => {
+          if (data.formId === input.formId) {
+            emit.next(data);
+          }
+        };
+
+        appEventBus.on("NEW_VIEW", onNewView);
+
+        return () => {
+          appEventBus.off("NEW_VIEW", onNewView);
+        };
+      });
+    }),
 });

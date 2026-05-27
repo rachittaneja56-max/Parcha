@@ -34,6 +34,7 @@ export type FormSettings = {
   password?: string | null;
   successMessage: string;
   theme: "terminal" | "windowsxp" | "standard" | "code_editor";
+  webhookUrl?: string | null;
 };
 
 export function GlobalSettingsPanel({
@@ -154,6 +155,22 @@ export function GlobalSettingsPanel({
                 <SelectItem value="code_editor">Code Editor</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="flex flex-col gap-2 pt-4 border-t border-zinc-800">
+            <label className="text-[11px] font-mono uppercase tracking-widest text-emerald-500 font-semibold">
+              Webhook URL (Integrations)
+            </label>
+            <p className="text-xs text-zinc-500 mb-1">
+              Parcha95 will instantly send a JSON payload to this URL when a submission is received.
+            </p>
+            <Input
+              type="url"
+              placeholder="https://hooks.slack.com/services/..."
+              value={settings.webhookUrl || ""}
+              onChange={(e) => onChange({ webhookUrl: e.target.value || null })}
+              className="h-8 text-sm font-mono bg-zinc-950 border-emerald-900/30 focus-visible:ring-emerald-500 text-zinc-100"
+            />
           </div>
 
           <div className="pt-6 mt-2 border-t border-red-900/30">

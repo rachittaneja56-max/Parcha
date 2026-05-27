@@ -30,7 +30,12 @@ export const responseRouter = router({
         input.payload,
         input.honeypotField,
         input.fingerprint,
-        ctx.user?.id
+        ctx.user?.id,
+        {
+          country: ctx.country as string | undefined,
+          referrer: input.referrer,
+          timeToComplete: input.timeToComplete,
+        }
       );
     }),
 

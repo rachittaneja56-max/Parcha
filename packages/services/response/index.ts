@@ -29,6 +29,8 @@ class ResponseService {
         target: analyticsTable.formId,
         set: { views: sql`${analyticsTable.views} + 1` },
       });
+
+    appEventBus.emit("NEW_VIEW", { formId: form.id });
   }
 
   public async submitResponse(
@@ -37,6 +39,11 @@ class ResponseService {
     honeypotField?: string,
     fingerprint?: string,
     userId?: string,
+    analytics?: {
+      country?: string;
+      referrer?: string;
+      timeToComplete?: number;
+    }
   ) {
     const form = await this.dbInstance.query.formsTable.findFirst({
       where: eq(formsTable.slug, slug),
@@ -67,6 +74,9 @@ class ResponseService {
           formId: form.id,
           payload: parsedPayload,
           respondentFingerprint: fingerprint,
+          country: analytics?.country,
+          referrer: analytics?.referrer,
+          timeToComplete: analytics?.timeToComplete,
         })
         .returning();
 
@@ -92,6 +102,20 @@ class ResponseService {
         response: newResponse,
       });
     });
+
+    if (form.webhookUrl) {
+      fetch(form.webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event: "form.submitted",
+          formId: form.id,
+          formTitle: form.title,
+          submittedAt: new Date().toISOString(),
+          payload: parsedPayload,
+        }),
+      }).catch((e) => console.error("Failed to fire webhook:", e));
+    }
 
     return { success: true, message: "Response submitted" };
   }

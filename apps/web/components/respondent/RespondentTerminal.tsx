@@ -30,6 +30,7 @@ export function RespondentTerminal({ formId }: { formId: string }) {
   const [visitorId, setVisitorId] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState("");
   const [activePassword, setActivePassword] = useState<string | undefined>(undefined);
+  const [startTime] = useState(() => Date.now());
 
   const { data: formConfig, error: formError, isLoading } = trpc.form.getPublicForm.useQuery(
     { formIdOrSlug: formId, password: activePassword },
@@ -97,8 +98,10 @@ export function RespondentTerminal({ formId }: { formId: string }) {
       payload: answers,
       fingerprint: visitorId || undefined,
       honeypotField: honeypot || undefined,
+      referrer: typeof document !== "undefined" ? document.referrer : undefined,
+      timeToComplete: Math.floor((Date.now() - startTime) / 1000),
     });
-  }, [visitorId, formConfig, submitResponseAsync]);
+  }, [visitorId, formConfig, submitResponseAsync, startTime]);
 
   if (bootPhase === "fetching") {
     return (

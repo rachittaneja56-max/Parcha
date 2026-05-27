@@ -36,6 +36,7 @@ export const UpdateSettingsSchema = z.object({
     requireAuth: z.boolean().optional(),
     password: z.string().nullable().optional(),
     successMessage: z.string().optional(),
+    webhookUrl: z.string().url("Must be a valid URL").nullable().optional(),
   }),
 });
 export type UpdateSettingsInput = z.infer<typeof UpdateSettingsSchema>;

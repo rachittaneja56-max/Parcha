@@ -34,6 +34,15 @@ export function ResponsesAnalytics({ formId }: { formId: string }) {
     },
   );
 
+  trpc.analytics.onNewView.useSubscription(
+    { formId },
+    {
+      onData: () => {
+        utils.form.getFormById.invalidate({ formId });
+      },
+    }
+  );
+
   if (formQuery.isLoading || responsesQuery.isLoading) {
     return (
       <div className="flex h-full w-full items-center justify-center">
@@ -48,7 +57,7 @@ export function ResponsesAnalytics({ formId }: { formId: string }) {
   const handleExportCSV = () => {
     if (!responses.length) return;
 
-    const allKeys = new Set<string>(["Date", "Response ID"]);
+    const allKeys = new Set<string>(["Date"]);
     responses.forEach((r: any) => {
       Object.keys(r.payload || {}).forEach((k) => allKeys.add(k));
     });
@@ -57,7 +66,6 @@ export function ResponsesAnalytics({ formId }: { formId: string }) {
     const rows = responses.map((r: any) => {
       const row: any = {
         Date: new Date(r.submittedAt).toISOString(),
-        "Response ID": r.id,
         ...(r.payload || {}),
       };
       return headers.map((h) => `"${(row[h] || "").toString().replace(/"/g, '""')}"`).join(",");
@@ -75,6 +83,17 @@ export function ResponsesAnalytics({ formId }: { formId: string }) {
 
   const views = form?.views || 0;
   const totalResponses = responses.length;
+  const conversionRate = views > 0 ? ((totalResponses / views) * 100).toFixed(1) : "0.0";
+
+  let totalTime = 0;
+  let timeCount = 0;
+  responses.forEach((r: any) => {
+    if (r.timeToComplete) {
+      totalTime += r.timeToComplete;
+      timeCount++;
+    }
+  });
+  const avgTime = timeCount > 0 ? (totalTime / timeCount).toFixed(0) : "0";
 
   const chartDataMap = new Map<string, number>();
   responses.forEach((r: any) => {
@@ -184,20 +203,51 @@ export function ResponsesAnalytics({ formId }: { formId: string }) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="flex items-center gap-2 mb-2 text-zinc-400">
             <Users className="h-4 w-4" />
             <h3 className="text-sm font-medium">Total Views</h3>
           </div>
           <p className="text-3xl font-bold text-zinc-100">{views}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+        
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="flex items-center gap-2 mb-2 text-zinc-400">
             <Activity className="h-4 w-4" />
             <h3 className="text-sm font-medium">Total Responses</h3>
           </div>
           <p className="text-3xl font-bold text-zinc-100">{totalResponses}</p>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="flex items-center gap-2 mb-2 text-emerald-400">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+            <h3 className="text-sm font-medium">Conversion Rate</h3>
+          </div>
+          <div className="flex items-baseline gap-1">
+            <p className="text-3xl font-bold text-zinc-100">{conversionRate}</p>
+            <span className="text-zinc-500 font-medium">%</span>
+          </div>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="flex items-center gap-2 mb-2 text-emerald-400">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 className="text-sm font-medium">Avg Completion Time</h3>
+          </div>
+          <div className="flex items-baseline gap-1">
+            <p className="text-3xl font-bold text-zinc-100">{avgTime}</p>
+            <span className="text-zinc-500 font-medium">sec</span>
+          </div>
         </div>
       </div>
 
@@ -371,9 +421,9 @@ export function ResponsesAnalytics({ formId }: { formId: string }) {
             <thead className="bg-zinc-900/50 border-b border-zinc-800">
               <tr>
                 <th className="px-6 py-3 font-medium text-zinc-500 whitespace-nowrap">Date</th>
-                <th className="px-6 py-3 font-medium text-zinc-500 whitespace-nowrap">
-                  Response ID
-                </th>
+                <th className="px-6 py-3 font-medium text-zinc-500 whitespace-nowrap">Country</th>
+                <th className="px-6 py-3 font-medium text-zinc-500 whitespace-nowrap">Referrer</th>
+                <th className="px-6 py-3 font-medium text-zinc-500 whitespace-nowrap">Time (s)</th>
                 {dynamicCols.map((col) => (
                   <th key={col} className="px-6 py-3 font-medium text-zinc-500 whitespace-nowrap">
                     {schemaMap.get(col) || col}
@@ -388,8 +438,21 @@ export function ResponsesAnalytics({ formId }: { formId: string }) {
                     <td className="px-6 py-4 whitespace-nowrap font-mono text-xs">
                       {format(new Date(r.submittedAt), "MMM dd, yyyy HH:mm")}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-mono text-xs text-zinc-500">
-                      {r.id.slice(0, 8)}...
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-zinc-400">
+                      {r.country || "-"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-zinc-400 max-w-[150px] truncate">
+                      {(() => {
+                        if (!r.referrer) return "-";
+                        try {
+                          return new URL(r.referrer).hostname;
+                        } catch {
+                          return r.referrer;
+                        }
+                      })()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-zinc-400">
+                      {r.timeToComplete ? `${r.timeToComplete}s` : "-"}
                     </td>
                     {dynamicCols.map((col) => (
                       <td key={col} className="px-6 py-4 whitespace-nowrap">
@@ -403,7 +466,7 @@ export function ResponsesAnalytics({ formId }: { formId: string }) {
               ) : (
                 <tr>
                   <td
-                    colSpan={2 + dynamicCols.length}
+                    colSpan={1 + dynamicCols.length}
                     className="px-6 py-8 text-center text-zinc-500"
                   >
                     No submissions yet.

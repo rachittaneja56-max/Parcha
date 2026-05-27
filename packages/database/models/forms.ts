@@ -40,6 +40,7 @@ export const formsTable = pgTable("forms", {
   expiresAt: timestamp("expires_at"),
   maxResponses: integer("max_responses"),
   isArchived: boolean("is_archived").default(false).notNull(),
+  webhookUrl: varchar("webhook_url", { length: 2048 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()).notNull().defaultNow(),
 });
