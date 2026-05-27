@@ -76,9 +76,13 @@ import { ResponsesAnalytics } from "./ResponsesAnalytics";
 export default function BuilderLayout({ 
   formId,
   initialView = "build",
+  initialForm,
+  initialResponses,
 }: { 
   formId: string;
   initialView?: "build" | "settings" | "analytics";
+  initialForm?: any;
+  initialResponses?: any;
 }) {
   const router = useRouter();
 
@@ -108,7 +112,13 @@ export default function BuilderLayout({
   }, []);
 
   const me = trpc.auth.me.useQuery(undefined, { retry: false, staleTime: 0 });
-  const formQuery = trpc.form.getFormById.useQuery({ formId }, { enabled: !!me.data?.user });
+  const formQuery = trpc.form.getFormById.useQuery(
+    { formId }, 
+    { 
+      enabled: !!me.data?.user,
+      initialData: initialForm || undefined,
+    }
+  );
   const updateSchema = trpc.form.updateSchema.useMutation();
   const updateSettings = trpc.form.updateSettings.useMutation();
   const deleteMutation = trpc.form.delete.useMutation();
@@ -566,7 +576,7 @@ export default function BuilderLayout({
 
             {activeView === "analytics" && (
               <main className="flex-1 flex flex-col h-full min-w-0 bg-zinc-950 overflow-y-auto">
-                <ResponsesAnalytics formId={formId} />
+                <ResponsesAnalytics formId={formId} initialResponses={initialResponses} />
               </main>
             )}
           </div>

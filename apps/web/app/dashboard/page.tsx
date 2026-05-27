@@ -156,6 +156,8 @@ export default function DashboardPage() {
 
   const totalViews = forms.reduce((acc, form) => acc + (form.views || 0), 0);
   const totalResponses = forms.reduce((acc, form) => acc + (form.responseCount || 0), 0);
+  const completionRate = totalViews > 0 ? ((totalResponses / totalViews) * 100).toFixed(1) : "0.0";
+  const numActiveForms = forms.filter(f => f.status === "published").length;
 
   const activeForms = forms.slice(0, 4);
 
@@ -222,16 +224,53 @@ export default function DashboardPage() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <h3 className="text-sm font-medium text-emerald-400 relative z-10">Total Views</h3>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-100 relative z-10">{totalViews}</p>
+            <div className="flex items-center gap-2 mb-2 text-emerald-400 relative z-10">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <h3 className="text-sm font-medium">Total Views</h3>
+            </div>
+            <p className="text-3xl font-bold tracking-tight text-zinc-100 relative z-10">{totalViews}</p>
           </div>
+          
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <h3 className="text-sm font-medium text-emerald-400 relative z-10">Total Responses</h3>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-100 relative z-10">{totalResponses}</p>
+            <div className="flex items-center gap-2 mb-2 text-emerald-400 relative z-10">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h3 className="text-sm font-medium">Total Responses</h3>
+            </div>
+            <p className="text-3xl font-bold tracking-tight text-zinc-100 relative z-10">{totalResponses}</p>
+          </div>
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center gap-2 mb-2 text-emerald-400 relative z-10">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              <h3 className="text-sm font-medium">Completion Rate</h3>
+            </div>
+            <div className="flex items-baseline gap-1 relative z-10">
+              <p className="text-3xl font-bold tracking-tight text-zinc-100">{completionRate}</p>
+              <span className="text-zinc-500 font-medium">%</span>
+            </div>
+          </div>
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center gap-2 mb-2 text-emerald-400 relative z-10">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              <h3 className="text-sm font-medium">Active Forms</h3>
+            </div>
+            <p className="text-3xl font-bold tracking-tight text-zinc-100 relative z-10">{numActiveForms}</p>
           </div>
         </div>
 

@@ -4,7 +4,7 @@ import { formsTable } from "@repo/database/schema";
 import { responsesTable } from "@repo/database/models/responses";
 import { analyticsTable } from "@repo/database/models/analytics";
 import { TRPCError } from "@trpc/server";
-import { getCache, setCache } from "@repo/redis";
+import { getCache, setCache, delCache } from "@repo/redis";
 import type { UpdateSettingsInput } from "@repo/validators";
 import bcrypt from "bcrypt";
 import {
@@ -75,6 +75,8 @@ class FormService {
       throw new TRPCError({ code: "NOT_FOUND", message: "Form not found or unauthorized" });
     }
 
+    await delCache(`form:${formId}`);
+
     return updatedForm;
   }
 
@@ -101,6 +103,7 @@ class FormService {
     }
 
     await invalidatePublicFormsCache();
+    await delCache(`form:${formId}`);
 
     return updatedForm;
   }
@@ -121,6 +124,7 @@ class FormService {
     
     await this.dbInstance.delete(formsTable).where(eq(formsTable.id, formId));
     await invalidatePublicFormsCache();
+    await delCache(`form:${formId}`);
 
     return { success: true };
   }
@@ -198,12 +202,21 @@ class FormService {
   }
 
   public async getFormById(formId: string, creatorId: string, isAdmin: boolean = false) {
-    const form = await this.dbInstance.query.formsTable.findFirst({
-      where: isAdmin
-        ? eq(formsTable.id, formId)
-        : and(eq(formsTable.id, formId), eq(formsTable.creatorId, creatorId)),
-    });
+    const cacheKey = `form:${formId}`;
+    let form = await getCache<any>(cacheKey);
+
+    if (!form) {
+      form = await this.dbInstance.query.formsTable.findFirst({
+        where: eq(formsTable.id, formId),
+      });
+
+      if (form) {
+        await setCache(cacheKey, form, 3600); // Cache for 1 hour
+      }
+    }
+
     if (!form) return null;
+    if (!isAdmin && form.creatorId !== creatorId) return null;
 
     return {
       ...form,

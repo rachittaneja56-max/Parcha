@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { formsTable, analyticsTable, responsesTable } from "@repo/database/schema";
 import { appEventBus } from "../events";
 import { createResponsePayloadSchema } from "./validation";
+import { getCache, setCache, delCache } from "@repo/redis";
 
 class ResponseService {
   constructor(private readonly dbInstance: typeof db) {}
@@ -103,6 +104,8 @@ class ResponseService {
       });
     });
 
+    await delCache(`responses:${form.id}`);
+
     if (form.webhookUrl) {
       fetch(form.webhookUrl, {
         method: "POST",
@@ -121,10 +124,18 @@ class ResponseService {
   }
 
   public async getResponsesByFormId(formId: string) {
-    return await this.dbInstance.query.responsesTable.findMany({
+    const cacheKey = `responses:${formId}`;
+    const cached = await getCache<any[]>(cacheKey);
+    if (cached) return cached;
+
+    const responses = await this.dbInstance.query.responsesTable.findMany({
       where: eq(responsesTable.formId, formId),
       orderBy: (responses, { desc }) => [desc(responses.submittedAt)],
     });
+
+    await setCache(cacheKey, responses, 60 * 5); // cache for 5 minutes
+
+    return responses;
   }
 }
 

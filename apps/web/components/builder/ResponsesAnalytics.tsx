@@ -19,10 +19,19 @@ import {
 } from "recharts";
 import { format, subDays, startOfDay } from "date-fns";
 
-export function ResponsesAnalytics({ formId }: { formId: string }) {
+export function ResponsesAnalytics({ 
+  formId, 
+  initialResponses 
+}: { 
+  formId: string;
+  initialResponses?: any[];
+}) {
   const utils = trpc.useUtils();
   const formQuery = trpc.form.getFormById.useQuery({ formId });
-  const responsesQuery = trpc.response.getResponses.useQuery({ formId });
+  const responsesQuery = trpc.response.getResponses.useQuery(
+    { formId },
+    { initialData: initialResponses, refetchInterval: 5000 }
+  );
 
   trpc.analytics.onNewSubmission.useSubscription(
     { formId },
@@ -319,37 +328,62 @@ export function ResponsesAnalytics({ formId }: { formId: string }) {
                         const data = getChoiceInsights(field.id);
                         const COLORS = ["#6366f1", "#10b981", "#0ea5e9", "#64748b", "#8b5cf6"];
                         return data.length > 0 ? (
-                          <div className="h-[220px] w-full flex items-center justify-center">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <PieChart>
-                                <Pie
-                                  data={data}
-                                  cx="50%"
-                                  cy="50%"
-                                  innerRadius={60}
-                                  outerRadius={80}
-                                  paddingAngle={5}
-                                  dataKey="value"
-                                  stroke="none"
-                                >
-                                  {data.map((entry, index) => (
-                                    <Cell
-                                      key={`cell-${index}`}
-                                      fill={COLORS[index % COLORS.length]}
-                                    />
-                                  ))}
-                                </Pie>
-                                <RechartsTooltip
-                                  contentStyle={{
-                                    backgroundColor: "#18181b",
-                                    borderColor: "#27272a",
-                                    color: "#f4f4f5",
-                                    borderRadius: "8px",
-                                  }}
-                                  itemStyle={{ color: "#fff" }}
-                                />
-                              </PieChart>
-                            </ResponsiveContainer>
+                          <div className="flex flex-col md:flex-row items-center gap-6 w-full mt-4">
+                            <div className="h-[200px] w-[200px] shrink-0">
+                              <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                  <Pie
+                                    data={data}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                    stroke="none"
+                                  >
+                                    {data.map((entry, index) => (
+                                      <Cell
+                                        key={`cell-${index}`}
+                                        fill={COLORS[index % COLORS.length]}
+                                      />
+                                    ))}
+                                  </Pie>
+                                  <RechartsTooltip
+                                    contentStyle={{
+                                      backgroundColor: "#18181b",
+                                      borderColor: "#27272a",
+                                      color: "#f4f4f5",
+                                      borderRadius: "8px",
+                                    }}
+                                    itemStyle={{ color: "#fff" }}
+                                  />
+                                </PieChart>
+                              </ResponsiveContainer>
+                            </div>
+                            <div className="flex flex-col gap-3 flex-1 w-full max-h-[200px] overflow-y-auto custom-scrollbar">
+                              {data.map((entry, index) => {
+                                const total = data.reduce((acc, curr) => acc + curr.value, 0);
+                                const percentage = ((entry.value / total) * 100).toFixed(1);
+                                return (
+                                  <div key={index} className="flex items-center justify-between text-sm">
+                                    <div className="flex items-center gap-2 overflow-hidden">
+                                      <div 
+                                        className="w-3 h-3 rounded-full shrink-0" 
+                                        style={{ backgroundColor: COLORS[index % COLORS.length] }} 
+                                      />
+                                      <span className="text-zinc-300 truncate" title={entry.name}>
+                                        {entry.name}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-3 shrink-0">
+                                      <span className="font-mono text-zinc-400">{entry.value}</span>
+                                      <span className="font-mono font-medium text-emerald-400 w-12 text-right">{percentage}%</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
                         ) : (
                           <div className="flex flex-1 items-center justify-center text-sm text-zinc-500 min-h-[220px]">
