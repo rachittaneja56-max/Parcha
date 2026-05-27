@@ -32,10 +32,9 @@ export const responseRouter = router({
         input.fingerprint,
         ctx.user?.id,
         {
-          country: ctx.country as string | undefined,
-          referrer: input.referrer,
           timeToComplete: input.timeToComplete,
-        }
+        },
+        ctx.user?.email
       );
     }),
 
