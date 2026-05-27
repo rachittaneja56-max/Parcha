@@ -5,7 +5,10 @@ import { trpc } from "~/trpc/client";
 import { Navbar } from "~/components/landing/Navbar";
 import { Hero } from "~/components/landing/Hero";
 import { Features } from "~/components/landing/Features";
+import { AdminGlimpseSection } from "~/components/landing/AdminGlimpseSection";
+import { AnalyticsGlimpseSection } from "~/components/landing/AnalyticsGlimpseSection";
 import { Pricing } from "~/components/landing/Pricing";
+import { FAQSection } from "~/components/landing/FAQSection";
 import { Footer } from "~/components/landing/Footer";
 import { KernelPanicEasterEgg } from "~/components/landing/KernelPanicEasterEgg";
 
@@ -29,9 +32,12 @@ export default function Home() {
       <Hero sessionData={sessionData} />
 
       <Features />
+      <AdminGlimpseSection />
+      <AnalyticsGlimpseSection />
 
       <Pricing />
 
+      <FAQSection />
       <Footer />
     </main>
   );
