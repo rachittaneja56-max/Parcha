@@ -98,27 +98,15 @@ class FormService {
       .innerJoin(usersTable, eq(formsTable.creatorId, usersTable.id))
       .where(eq(formsTable.id, formId));
 
-    let updatedForm;
-    try {
-      const [result] = await this.dbInstance
-        .update(formsTable)
-        .set(finalUpdates)
-        .where(
-          isAdmin
-            ? eq(formsTable.id, formId)
-            : and(eq(formsTable.id, formId), eq(formsTable.creatorId, creatorId))
-        )
-        .returning();
-      updatedForm = result;
-    } catch (error: any) {
-      if (error.code === "23505" && error.constraint === "forms_slug_unique") {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "This custom URL is already taken. Please try another one.",
-        });
-      }
-      throw error;
-    }
+    const [updatedForm] = await this.dbInstance
+      .update(formsTable)
+      .set(finalUpdates)
+      .where(
+        isAdmin
+          ? eq(formsTable.id, formId)
+          : and(eq(formsTable.id, formId), eq(formsTable.creatorId, creatorId))
+      )
+      .returning();
 
     if (!updatedForm) {
       throw new TRPCError({ code: "NOT_FOUND", message: "Form not found or unauthorized" });

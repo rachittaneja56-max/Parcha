@@ -30,7 +30,6 @@ export const UpdateSettingsSchema = z.object({
   formId: z.string().uuid(),
   updates: z.object({
     title: z.string().optional(),
-    slug: z.string().optional(),
     status: z.enum(["draft", "published"]).optional(),
     visibility: z.enum(["public", "unlisted", "unpublished"]).optional(),
     theme: z.enum(["terminal", "windowsxp", "standard", "code_editor"]).optional(),

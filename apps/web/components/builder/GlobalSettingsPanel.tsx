@@ -36,7 +36,6 @@ import { format } from "date-fns";
 
 export type FormSettings = {
   title: string;
-  slug?: string;
   status: "draft" | "published";
   visibility: "public" | "unlisted" | "unpublished";
   requireAuth: boolean;
@@ -79,22 +78,6 @@ export function GlobalSettingsPanel({
               onPointerDown={(e) => e.stopPropagation()}
               className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100"
             />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
-              Form URL (Slug)
-            </label>
-            <div className="flex items-center gap-2">
-              <span className="text-zinc-500 text-sm font-mono">parcha95.com/f/</span>
-              <Input
-                value={settings.slug || ""}
-                onChange={(e) => onChange({ slug: e.target.value })}
-                onPointerDown={(e) => e.stopPropagation()}
-                placeholder="my-awesome-form"
-                className="h-8 text-sm font-mono bg-zinc-950 border-zinc-800 focus-visible:ring-zinc-500 text-zinc-100 flex-1"
-              />
-            </div>
           </div>
 
           <div className="flex items-center justify-between">
