@@ -7,7 +7,7 @@ import { invalidatePublicFormsCache } from "../form/cache";
 import { delCache } from "@repo/redis";
 
 class AdminService {
-  constructor(private readonly dbInstance: typeof db) {}
+  constructor(private readonly dbInstance: typeof db) { }
 
   public async getPlatformTelemetry() {
     const [
@@ -72,7 +72,7 @@ class AdminService {
       await invalidatePublicFormsCache();
       return updatedForm;
     }
-    
+
     if (action === "publish") {
       const [updatedForm] = await this.dbInstance
         .update(formsTable)
@@ -99,10 +99,10 @@ class AdminService {
       await this.dbInstance.delete(responsesTable).where(eq(responsesTable.formId, formId));
       await this.dbInstance.delete(analyticsTable).where(eq(analyticsTable.formId, formId));
       await this.dbInstance.delete(formsTable).where(eq(formsTable.id, formId));
-      
+
       await invalidatePublicFormsCache();
       await delCache(`form:${formId}`);
-      
+
       return { success: true, deletedId: formId };
     }
 
