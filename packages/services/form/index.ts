@@ -188,6 +188,8 @@ class FormService {
         schema: formsTable.schema,
         successMessage: formsTable.successMessage,
         theme: formsTable.theme,
+        expiresAt: formsTable.expiresAt,
+        maxResponses: formsTable.maxResponses,
       });
 
     if (!form) return null;
@@ -206,6 +208,25 @@ class FormService {
       }
     }
 
+    let isClosed = false;
+    let closedReason: "expired" | "max_responses" | undefined = undefined;
+
+    if (form.expiresAt && new Date() > new Date(form.expiresAt)) {
+      isClosed = true;
+      closedReason = "expired";
+    }
+
+    if (!isClosed && form.maxResponses !== null) {
+      const analytics = await this.dbInstance.query.analyticsTable.findFirst({
+        where: eq(analyticsTable.formId, form.id)
+      });
+      const submissions = analytics?.submissions ?? 0;
+      if (submissions >= form.maxResponses) {
+        isClosed = true;
+        closedReason = "max_responses";
+      }
+    }
+
     return {
       id: form.id,
       title: form.title,
@@ -217,6 +238,8 @@ class FormService {
       schema: isAuthorized ? sanitizePublicSchema(form.schema) : [],
       isPasswordProtected: !!(form.passwordHash || form.password),
       isAuthorized,
+      isClosed,
+      closedReason,
     };
   }
 

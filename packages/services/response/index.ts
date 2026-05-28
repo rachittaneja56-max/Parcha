@@ -110,7 +110,8 @@ class ResponseService {
       throw new TRPCError({ code: "FORBIDDEN", message: "This form is no longer accepting responses (Expired)." });
     }
 
-    if (form.maxResponses !== null && form.analytics && form.analytics.submissions >= form.maxResponses) {
+    const currentSubmissions = form.analytics?.submissions ?? 0;
+    if (form.maxResponses !== null && currentSubmissions >= form.maxResponses) {
       throw new TRPCError({ code: "FORBIDDEN", message: "This form has reached its maximum number of responses." });
     }
 

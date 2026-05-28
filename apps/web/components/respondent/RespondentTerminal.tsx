@@ -66,6 +66,12 @@ export function RespondentTerminal({ formId, initialData }: { formId: string; in
       return;
     }
 
+    if (formConfig.isClosed) {
+      setErrorMsg(`> ERROR 403: This form is no longer accepting responses.`);
+      setBootPhase("error");
+      return;
+    }
+
     if (formConfig.requireAuth && !sessionData?.user) {
       setBootPhase("auth_prompt");
       return;

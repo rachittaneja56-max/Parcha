@@ -38,7 +38,7 @@ export const UpdateSettingsSchema = z.object({
     successMessage: z.string().optional(),
     webhookUrl: z.string().url("Must be a valid URL").nullable().optional(),
     expiresAt: z.string().nullable().optional(),
-    maxResponses: z.number().nullable().optional(),
+    maxResponses: z.number().min(1).nullable().optional(),
   }),
 });
 export type UpdateSettingsInput = z.infer<typeof UpdateSettingsSchema>;
