@@ -280,7 +280,7 @@ export default function AdminDashboardPage() {
                             [ Edit ]
                           </Link>
                           <Link
-                            href={`/dashboard/builder/${form.id}/responses`}
+                            href={`/dashboard/builder/${form.id}?view=analytics`}
                             className="text-zinc-400 hover:text-emerald-400 px-2 py-1 rounded-md text-xs font-mono transition-colors"
                           >
                             [ Stats ]

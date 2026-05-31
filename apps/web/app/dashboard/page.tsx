@@ -168,6 +168,20 @@ export default function DashboardPage() {
     }
   }, [me.data?.user]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get("verified") === "true") {
+        toast.success("Email successfully verified!", {
+          duration: 5000,
+          id: "verified-success-toast",
+        });
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+      }
+    }
+  }, []);
+
   if (me.isLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-[#0a0a0a]">

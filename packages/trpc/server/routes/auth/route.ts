@@ -176,7 +176,7 @@ export const authRouter = router({
       try {
         await authService.verifyEmail(input.token);
         if (ctx?.res) {
-          ctx.res.redirect(env.FRONTEND_URL);
+          ctx.res.redirect(`${env.FRONTEND_URL}/dashboard?verified=true`);
           return { success: true, redirecting: true };
         }
         return { success: true };
