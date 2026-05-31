@@ -486,6 +486,7 @@ export default function BuilderLayout({
                   </div>
                   <div className="flex flex-col items-center justify-center mt-6 p-4 bg-white rounded-lg">
                     <QRCode
+                      id="form-qr-code"
                       value={origin ? `${origin}/f/${formQuery.data?.slug || formId}` : ""}
                       size={200}
                     />
@@ -494,7 +495,33 @@ export default function BuilderLayout({
                     <Button
                       variant="outline"
                       className="gap-2 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-100 bg-transparent text-zinc-300"
-                      onClick={() => toast.success("QR Code downloaded (stub)")}
+                      onClick={() => {
+                        const svg = document.getElementById("form-qr-code");
+                        if (svg) {
+                          const svgData = new XMLSerializer().serializeToString(svg);
+                          const canvas = document.createElement("canvas");
+                          const ctx = canvas.getContext("2d");
+                          const img = new Image();
+                          img.onload = () => {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            if (ctx) {
+                              ctx.fillStyle = "white";
+                              ctx.fillRect(0, 0, canvas.width, canvas.height);
+                              ctx.drawImage(img, 0, 0);
+                            }
+                            const pngFile = canvas.toDataURL("image/png");
+                            const downloadLink = document.createElement("a");
+                            downloadLink.download = `${formName}-qrcode.png`;
+                            downloadLink.href = `${pngFile}`;
+                            downloadLink.click();
+                            toast.success("QR Code downloaded successfully");
+                          };
+                          img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
+                        } else {
+                          toast.error("Failed to generate QR code");
+                        }
+                      }}
                     >
                       <Download className="h-4 w-4" />
                       Download QR
