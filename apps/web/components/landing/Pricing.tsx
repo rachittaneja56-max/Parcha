@@ -52,7 +52,7 @@ export function Pricing() {
       )}
 
       <section id="pricing" className="py-16 px-6 border-t border-zinc-900 bg-[#050505] relative">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="mb-8 md:text-center max-w-2xl mx-auto flex flex-col gap-3">
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-white">
               Simple, transparent pricing.

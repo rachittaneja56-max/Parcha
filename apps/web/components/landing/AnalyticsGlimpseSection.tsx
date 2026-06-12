@@ -34,7 +34,7 @@ const DYNAMIC_COLS = ["handle", "env", "rating"];
 export const AnalyticsGlimpseSection = () => {
   return (
     <section className="relative py-16 px-6 bg-[#050505] border-t border-zinc-900">
-      <div className="max-w-3xl mx-auto flex flex-col gap-8">
+      <div className="max-w-5xl mx-auto flex flex-col gap-8">
 
         <div className="flex flex-col gap-3 max-w-2xl">
 

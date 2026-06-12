@@ -41,7 +41,7 @@ export const FAQSection = () => {
 
   return (
     <section className="relative py-16 px-6 overflow-hidden bg-[#050505] border-t border-zinc-900">
-      <div className="max-w-3xl mx-auto flex flex-col gap-10 relative z-10">
+      <div className="max-w-5xl mx-auto flex flex-col gap-10 relative z-10">
 
         <div className="flex flex-col gap-3">
 
