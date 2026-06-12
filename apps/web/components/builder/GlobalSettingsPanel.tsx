@@ -193,6 +193,7 @@ export function GlobalSettingsPanel({
                     mode="single"
                     selected={settings.expiresAt ? new Date(settings.expiresAt) : undefined}
                     onSelect={(date) => onChange({ expiresAt: date ? date.toISOString() : null })}
+                    disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                     initialFocus
                     className="text-zinc-100"
                   />
