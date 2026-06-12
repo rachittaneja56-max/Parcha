@@ -546,7 +546,7 @@ export default function BuilderLayout({
                   disabled={updateSettings.isPending}
                 >
                   <div className="h-1.5 w-1.5 rounded-full bg-zinc-500" />
-                  [ Unpublish ]
+                  Unpublish
                 </Button>
               ) : (
                 <Button
@@ -563,7 +563,7 @@ export default function BuilderLayout({
                   disabled={updateSettings.isPending}
                 >
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  [ Publish ]
+                  Publish
                 </Button>
               )}
 
