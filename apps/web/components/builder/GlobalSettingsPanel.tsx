@@ -68,6 +68,26 @@ export function GlobalSettingsPanel({
       </div>
       <div className="flex-1 overflow-y-auto">
         <div className="p-6 flex flex-col gap-4">
+          <div className="flex flex-col gap-2 mb-2 pb-4 border-b border-zinc-800">
+            <label className="text-[11px] font-mono uppercase tracking-widest text-emerald-500 font-semibold">
+              Form Theme
+            </label>
+            <Select
+              value={settings.theme}
+              onValueChange={(val) => onChange({ theme: val as any })}
+            >
+              <SelectTrigger className="w-full bg-zinc-950 border-zinc-800 focus:ring-zinc-500 text-zinc-100 h-9 font-mono text-sm">
+                <SelectValue placeholder="Select a theme" />
+              </SelectTrigger>
+              <SelectContent className="bg-zinc-950 border-zinc-800 text-zinc-100 font-mono">
+                <SelectItem value="terminal">Terminal (Dark)</SelectItem>
+                <SelectItem value="windowsxp">Windows 95</SelectItem>
+                <SelectItem value="standard">Standard Form</SelectItem>
+                <SelectItem value="code_editor">Code Editor</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="flex flex-col gap-2">
             <label className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
               Form Title
@@ -206,25 +226,7 @@ export function GlobalSettingsPanel({
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
-              Form Theme
-            </label>
-            <Select
-              value={settings.theme}
-              onValueChange={(val) => onChange({ theme: val as any })}
-            >
-              <SelectTrigger className="w-full bg-zinc-950 border-zinc-800 focus:ring-zinc-500 text-zinc-100 h-9 font-mono text-sm">
-                <SelectValue placeholder="Select a theme" />
-              </SelectTrigger>
-              <SelectContent className="bg-zinc-950 border-zinc-800 text-zinc-100 font-mono">
-                <SelectItem value="terminal">Terminal (Dark)</SelectItem>
-                <SelectItem value="windowsxp">Windows 95</SelectItem>
-                <SelectItem value="standard">Standard Form</SelectItem>
-                <SelectItem value="code_editor">Code Editor</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+
 
           <div className="flex flex-col gap-2 pt-4 border-t border-zinc-800">
             <label className="text-[11px] font-mono uppercase tracking-widest text-emerald-500 font-semibold">

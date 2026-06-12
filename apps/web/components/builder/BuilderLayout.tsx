@@ -530,6 +530,43 @@ export default function BuilderLayout({
                 </DialogContent>
               </Dialog>
 
+              {globalSettings.status === "published" ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 text-xs font-mono rounded-sm border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 h-7 px-3"
+                  onClick={() => {
+                    const nextSettings = { ...globalSettings, status: "draft" as const };
+                    setGlobalSettings(nextSettings);
+                    updateSettings.mutate({ formId, updates: nextSettings }, {
+                      onSuccess: () => setSaveStatus("saved")
+                    });
+                    toast.success("Form unpublished.");
+                  }}
+                  disabled={updateSettings.isPending}
+                >
+                  <div className="h-1.5 w-1.5 rounded-full bg-zinc-500" />
+                  [ Unpublish ]
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  className="gap-2 text-xs font-mono rounded-sm bg-emerald-600 text-white hover:bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)] h-7 px-3"
+                  onClick={() => {
+                    const nextSettings = { ...globalSettings, status: "published" as const };
+                    setGlobalSettings(nextSettings);
+                    updateSettings.mutate({ formId, updates: nextSettings }, {
+                      onSuccess: () => setSaveStatus("saved")
+                    });
+                    toast.success("Form published!");
+                  }}
+                  disabled={updateSettings.isPending}
+                >
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  [ Publish ]
+                </Button>
+              )}
+
               <Button
                 size="sm"
                 className="gap-2 text-xs font-mono rounded-sm bg-zinc-100 text-zinc-900 hover:bg-zinc-200 h-7 px-3"
