@@ -175,7 +175,7 @@ export function Hero({ sessionData }: { sessionData: SessionData | undefined | n
           transition={{ duration: 0.8, delay: 0.15 }}
           className="lg:col-span-6 flex flex-col items-center [perspective:1200px]"
         >
-          <div className="flex flex-wrap gap-2 mb-6 justify-center z-20">
+          <div className="flex flex-wrap lg:flex-nowrap gap-2 lg:gap-1.5 mb-6 justify-center z-20 w-full max-w-lg">
             {[
               { id: "terminal", label: "Terminal (CLI)" },
               { id: "code_editor", label: "VS Code Editor" },
@@ -190,7 +190,7 @@ export function Hero({ sessionData }: { sessionData: SessionData | undefined | n
                   );
                   resetMockForm();
                 }}
-                className={`px-4 py-1.5 rounded-full text-xs font-mono font-bold border transition-all ${
+                className={`px-3 sm:px-4 lg:px-2.5 xl:px-3 py-1.5 rounded-full text-[11px] sm:text-xs whitespace-nowrap font-mono font-bold border transition-all ${
                   activeTheme === theme.id
                     ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
                     : "bg-[#0A0A0A] border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700"
