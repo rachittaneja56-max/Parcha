@@ -26,6 +26,19 @@ No bloat. Keyboard-first. Fully customizable. Built for the modern web.
 Most form builders are clunky, slow, and designed for marketing teams. **Parcha 95** is built differently. We wanted a form builder that felt like an IDE: extremely fast, strictly typed, keyboard-friendly, and beautifully designed. Whether you want a retro Windows 95 aesthetic, a hacker-style terminal UI, or a clean modern SaaS look, Parcha 95 gives you the tools to build it in seconds.
 
 ---
+## Demo Credentials
+
+Want to test the RBAC features or skip registration? Use these demo accounts:
+
+**Admin Account**
+* Email: `admin@parcha95.com`
+* Password: `parcha2026`
+
+**Creator Account**
+* Email: `demo@parcha95.com`
+* Password: `parcha2026`
+
+---
 
 ## End-to-End User Flow
 
@@ -173,19 +186,6 @@ To provide a beautiful, interactive developer experience, we integrate **Scalar*
 
 ---
 
-## Demo Credentials
-
-Want to test the RBAC features or skip registration? Use these demo accounts:
-
-**Admin Account**
-* Email: `admin@parcha95.com`
-* Password: `parcha2026`
-
-**Creator Account**
-* Email: `demo@parcha95.com`
-* Password: `parcha2026`
-
----
 
 ## Local Setup Instructions
 
