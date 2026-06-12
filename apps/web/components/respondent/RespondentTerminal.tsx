@@ -67,7 +67,11 @@ export function RespondentTerminal({ formId, initialData }: { formId: string; in
     }
 
     if (formConfig.isClosed) {
-      setErrorMsg(`> ERROR 403: This form is no longer accepting responses.`);
+      if (formConfig.closedReason === "max_responses") {
+        setErrorMsg("Form is not accepting the responses");
+      } else {
+        setErrorMsg("This form is no longer accepting responses.");
+      }
       setBootPhase("error");
       return;
     }
