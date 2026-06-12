@@ -5,10 +5,6 @@ import { Button } from "~/components/ui/button";
 import { Eye, Monitor, ChevronRight } from "lucide-react";
 import { ThemeBadge } from "./ThemeBadge";
 
-const CATEGORIES = ["All Blueprints", "Startups", "Developer Tools", "Windows 95"];
-const STARTUP_THEMES = new Set(["standard", "windowsxp", "windows95"]);
-const DEVELOPER_TOOL_THEMES = new Set(["terminal", "code_editor"]);
-const WINDOWS_THEMES = new Set(["windowsxp", "windows95"]);
 
 type CommunityForm = {
   id: string;
@@ -26,50 +22,21 @@ interface CommunityRegistryProps {
   forms: CommunityForm[] | undefined;
   isLoading: boolean;
   isError: boolean;
-  activeCategory: string;
-  setActiveCategory: (category: string) => void;
 }
 
-const filterFormsByCategory = (forms: CommunityForm[] | undefined, activeCategory: string) =>
-  forms?.filter((form) => {
-    if (activeCategory === "All Blueprints") return true;
-    if (activeCategory === "Startups") return STARTUP_THEMES.has(form.theme);
-    if (activeCategory === "Developer Tools") return DEVELOPER_TOOL_THEMES.has(form.theme);
-    if (activeCategory === "Windows 95") return WINDOWS_THEMES.has(form.theme);
-    return true;
-  });
+
 
 export function CommunityRegistry({
   forms,
   isLoading,
   isError,
-  activeCategory,
-  setActiveCategory,
 }: CommunityRegistryProps) {
-  const filteredForms = useMemo(
-    () => filterFormsByCategory(forms, activeCategory),
-    [forms, activeCategory],
-  );
+  const filteredForms = forms;
 
   return (
     <div className="border-t border-zinc-900 pt-16">
       <div className="mb-12">
         <h2 className="text-2xl font-semibold text-white mb-8">Community Blueprints</h2>
-        <div className="flex flex-wrap items-center gap-3">
-          {CATEGORIES.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
-                activeCategory === category
-                  ? "bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.15)]"
-                  : "bg-[#0A0A0A] text-zinc-400 border border-zinc-800/80 hover:border-zinc-700 hover:text-zinc-200"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
       </div>
 
       {isLoading ? (

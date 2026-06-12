@@ -13,7 +13,6 @@ import { usePublicForms } from "~/hooks/usePublicForms";
 
 export default function ExplorePage() {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState("All Blueprints");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTemplateIdx, setActiveTemplateIdx] = useState<number | null>(null);
 
@@ -74,8 +73,6 @@ export default function ExplorePage() {
           forms={forms}
           isLoading={isLoading}
           isError={isError}
-          activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory}
         />
       </main>
 
