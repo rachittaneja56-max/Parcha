@@ -52,13 +52,9 @@ export function Pricing() {
       )}
 
       <section id="pricing" className="py-16 px-6 border-t border-zinc-900 bg-[#050505] relative">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <div className="text-xs font-mono uppercase tracking-widest text-emerald-400 border border-emerald-900/50 bg-emerald-950/20 px-3 py-1 rounded-full w-fit mb-4 mx-auto">
-              Scalability Plan
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-white mb-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-8 md:text-center max-w-2xl mx-auto flex flex-col gap-3">
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-white">
               Simple, transparent pricing.
             </h2>
             <p className="text-zinc-400 text-lg">
@@ -66,10 +62,8 @@ export function Pricing() {
             </p>
           </div>
 
-          {/* Pricing Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
 
-            {/* Tier 1: Free */}
             <div className="bg-[#0A0A0A] border border-zinc-800/50 rounded-2xl p-8 flex flex-col hover:border-zinc-700 transition-all duration-300">
               <h3 className="text-lg font-medium text-white mb-1 font-mono">Free</h3>
               <p className="text-zinc-500 text-xs mb-4">Start prototyping with zero friction</p>
@@ -97,9 +91,7 @@ export function Pricing() {
               </Link>
             </div>
 
-            {/* Tier 2: Pro (Highlighted) */}
             <div className="bg-[#0A0A0A] border border-emerald-500/50 rounded-2xl p-8 flex flex-col relative shadow-[0_0_50px_rgba(16,185,129,0.05)] md:-translate-y-2 hover:border-emerald-400 transition-all duration-300">
-              {/* Recommended Tag */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-emerald-500 text-black text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest font-mono shadow-[0_0_10px_rgba(16,185,129,0.3)]">
                 Recommended
               </div>

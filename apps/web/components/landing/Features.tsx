@@ -94,12 +94,9 @@ export function BuilderGlimpse() {
 export function Features() {
   return (
     <section id="features" className="py-16 px-6 bg-[#050505] border-t border-zinc-900 relative">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-10 md:text-center max-w-2xl mx-auto">
-          <div className="text-xs font-mono uppercase tracking-widest text-emerald-400 border border-emerald-900/50 bg-emerald-950/20 px-3 py-1 rounded-full w-fit mb-4 md:mx-auto">
-            System Specs
-          </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-white mb-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-8 md:text-center max-w-2xl mx-auto flex flex-col gap-3">
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-white">
             Engineered for speed.<br className="hidden md:block" /> Crafted for growth.
           </h2>
           <p className="text-zinc-400 text-lg">

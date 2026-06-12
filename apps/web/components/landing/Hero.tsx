@@ -126,18 +126,15 @@ export function Hero({ sessionData }: { sessionData: SessionData | undefined | n
 
   return (
     <section className="relative pt-20 pb-16 md:pt-32 md:pb-24 px-6 overflow-hidden">
-      {/* Background radial glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 blur-[160px] rounded-full pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-        {/* Hero Left Content */}
+      <div className="max-w-3xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="lg:col-span-6 flex flex-col gap-6"
         >
-          {/* Tagline */}
           <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-emerald-400 border border-emerald-950/60 bg-emerald-950/20 px-3 py-1.5 rounded-full w-fit">
             <Sparkles className="w-3.5 h-3.5" /> Beautiful Forms Lineup
           </div>

@@ -46,12 +46,10 @@ const numActiveForms = MOCK_FORMS.filter((f) => f.status === "published").length
 export const AdminGlimpseSection = () => {
   return (
     <section className="relative py-16 px-6 bg-[#050505] border-t border-zinc-900">
-      <div className="max-w-7xl mx-auto flex flex-col gap-8">
+      <div className="max-w-3xl mx-auto flex flex-col gap-8">
 
         <div className="flex flex-col gap-3 max-w-2xl">
-          <div className="text-xs font-mono uppercase tracking-widest text-emerald-400 border border-emerald-900/50 bg-emerald-950/20 px-3 py-1 rounded-full w-fit">
-            Command Center
-          </div>
+
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tighter text-white">
             Manage every form.
           </h2>
@@ -60,7 +58,6 @@ export const AdminGlimpseSection = () => {
           </p>
         </div>
 
-        {/* Dashboard chrome window */}
         <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
 
           {/* Nav bar mirroring actual dashboard */}

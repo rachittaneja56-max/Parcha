@@ -43,11 +43,8 @@ export const FAQSection = () => {
     <section className="relative py-16 px-6 overflow-hidden bg-[#050505] border-t border-zinc-900">
       <div className="max-w-3xl mx-auto flex flex-col gap-10 relative z-10">
 
-        {/* Header — consistent with other sections */}
         <div className="flex flex-col gap-3">
-          <div className="text-xs font-mono uppercase tracking-widest text-emerald-400 border border-emerald-900/50 bg-emerald-950/20 px-3 py-1 rounded-full w-fit">
-            FAQ
-          </div>
+
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tighter text-white">
             Frequently Asked Questions
           </h2>
