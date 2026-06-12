@@ -1,6 +1,8 @@
 import { RespondentTerminal } from "~/components/respondent/RespondentTerminal";
 import { api } from "~/trpc/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function FormRespondentPage({ params }: { params: Promise<{ formId: string }> }) {
   const { formId } = await params;
   
