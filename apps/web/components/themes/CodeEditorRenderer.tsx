@@ -640,17 +640,25 @@ export function CodeEditorRenderer({
                   >
                     ◀ Prev Question
                   </button>
-                  <button
-                    onClick={() => {
-                      if (activeFieldIndex < schema.length - 1) {
-                        setActiveFieldIndex((prev) => prev + 1);
-                      }
-                    }}
-                    disabled={activeFieldIndex === schema.length - 1}
-                    className="px-4 py-1.5 bg-[#333333] hover:bg-[#3c3c3c] border border-[#474747] text-white disabled:opacity-40 rounded text-xs cursor-pointer font-bold select-none focus:outline-none transition-colors"
-                  >
-                    Next Question ▶
-                  </button>
+                  {activeFieldIndex === schema.length - 1 ? (
+                    <button
+                      onClick={validateAndSubmit}
+                      className="px-4 py-1.5 bg-[#007acc] hover:bg-[#0062a3] border border-[#007acc] text-white rounded text-xs cursor-pointer font-bold select-none focus:outline-none transition-colors flex items-center gap-1"
+                    >
+                      ▶ Run Survey
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        if (activeFieldIndex < schema.length - 1) {
+                          setActiveFieldIndex((prev) => prev + 1);
+                        }
+                      }}
+                      className="px-4 py-1.5 bg-[#333333] hover:bg-[#3c3c3c] border border-[#474747] text-white disabled:opacity-40 rounded text-xs cursor-pointer font-bold select-none focus:outline-none transition-colors"
+                    >
+                      Next Question ▶
+                    </button>
+                  )}
                 </div>
 
               </div>
