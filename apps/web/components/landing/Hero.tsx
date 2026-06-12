@@ -216,7 +216,7 @@ export function Hero({ sessionData }: { sessionData: SessionData | undefined | n
               rotateY,
               transformStyle: "preserve-3d",
             }}
-            className={`relative w-full max-w-lg ${themeConfigs[activeTheme].container} overflow-hidden z-10 transition-all duration-300`}
+            className={`relative w-full max-w-lg h-[450px] ${themeConfigs[activeTheme].container} overflow-hidden z-10 transition-all duration-300`}
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -225,7 +225,7 @@ export function Hero({ sessionData }: { sessionData: SessionData | undefined | n
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="w-full"
+                className="w-full h-full flex flex-col overflow-y-auto scrollbar-hide"
               >
                 {activeTheme === "terminal" && (
                   <HeroTerminalTheme
